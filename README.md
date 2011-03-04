@@ -30,7 +30,7 @@ Change the artifactId and groupId in the pom.xml and in any Spring configuration
 
 Want to test all the config is OK
 
-   > mvn jetty:run
+    > mvn jetty:run
 
 Open http://0.0.0.0:8080/edify and you should see a nice *Hello World*
 
