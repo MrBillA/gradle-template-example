@@ -32,7 +32,7 @@ Want to test all the config is OK
 
     > mvn jetty:run
 
-Open http://0.0.0.0:8080/edify and you should see a nice **Hello World!**
+Open [http://0.0.0.0:8080/edify](http://0.0.0.0:8080/edify) and you should see a nice **Hello World!**
 
 # TODO
 
