@@ -32,7 +32,7 @@ Want to test all the config is OK
 
     > mvn jetty:run
 
-Open http://0.0.0.0:8080/edify and you should see a nice *Hello World*
+Open http://0.0.0.0:8080/edify and you should see a nice **Hello World!**
 
 # TODO
 
@@ -40,5 +40,5 @@ Open http://0.0.0.0:8080/edify and you should see a nice *Hello World*
 * Create a small terminal script (Ruby!) that changes the artifactId and groupId, etc.
 * Add any missing dependencies if needed
 * Change the datasource config from commons-dbcp to c3p0
-* Add jQuery to the default template?
+* Add jQuery to the default jspx template?
 * Create a new template for a similar stack but with Flex frontend
