@@ -28,6 +28,18 @@ To start a new Java project based on this template simple clone it (yeah is that
 
 Change the artifactId and groupId in the pom.xml and in any Spring configuration, code your app, commit and push to your app GitHub repo and that's it (Don't push to the template repo if you do you would be in trouble!).
 
+Also change the following in the web.xml file:
+
+    <context-param>
+       <param-name>webAppRootKey</param-name>
+       <param-value>edify.root</param-value>
+    </context-param>
+
+    <display-name>edify-java-spring-jpa-template</display-name>
+    <description>Edify Java Spring JPA WebApp Template</description>
+
+    <servlet-name>edify</servlet-name>
+
 Want to test all the config is OK
 
     > mvn jetty:run
