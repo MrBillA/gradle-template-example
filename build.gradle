@@ -7,8 +7,6 @@ apply plugin: 'eclipse'
 repositories {
   mavenLocal()
   mavenCentral()
-/*  mavenRepo name: 'jboss-nexus', urls: 'https://repository.jboss.org/nexus/content/groups/public/'
-  mavenRepo name: 'jboss-snapshots', urls: 'http://snapshots.jboss.org/maven2/'*/
 }
 
 version = '1.0-SNAPSHOT'
