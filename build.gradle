@@ -2,11 +2,13 @@ apply plugin: 'java'
 apply plugin: 'war'
 apply plugin: 'jetty'
 apply plugin: 'idea'
+apply plugin: 'eclipse'
 
 repositories {
+  mavenLocal()
   mavenCentral()
-  mavenRepo name: 'jboss-nexus', urls: "https://repository.jboss.org/nexus/content/groups/public/"
-  mavenRepo name: "jboss-snapshots", urls: "http://snapshots.jboss.org/maven2/"
+/*  mavenRepo name: 'jboss-nexus', urls: 'https://repository.jboss.org/nexus/content/groups/public/'
+  mavenRepo name: 'jboss-snapshots', urls: 'http://snapshots.jboss.org/maven2/'*/
 }
 
 version = '1.0-SNAPSHOT'
@@ -24,67 +26,78 @@ tilesVersion = '2.2.1'
 slf4jVersion = '1.6.1'
 
 configurations {
+  runtime.transitive = true
+  testRuntime.transitive = true
   all*.exclude group: 'commons-logging'
 }
 
+hibernate = [
+        'org.hibernate:hibernate-core:3.6.6.Final',
+        'org.hibernate:hibernate-validator:4.2.0.Final',
+        'org.hibernate:hibernate-entitymanager:3.6.6.Final',
+        'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final',
+]
+
 dependencies {
   providedRuntime('javax.servlet:servlet-api:2.5', 'javax.el:el-api:1.0', 'javax.servlet.jsp:jsp-api:2.1')
-  testRuntime([group: 'junit', name: 'junit', version: '4.8.2', transitive: true])
+  testRuntime('junit:junit:4.8.2')
+  // ** Hibernate **
+  hibernate.collect {
+    runtime(it) {
+      exclude(group: 'cglib', name: 'cglib')
+      exclude(group: 'dom4j', name: 'dom4j')
+    }
+  }
   runtime(
-    // Spring
-    [group: 'org.springframework', name: 'spring-core', version: springVersion, transitive: true],
-    [group: 'org.springframework', name: 'spring-context', version: springVersion, transitive: true],
-    [group: 'org.springframework', name: 'spring-aop', version: springVersion, transitive: true],
-    [group: 'org.springframework', name: 'spring-aspects', version: springVersion, transitive: true],
-    [group: 'org.springframework', name: 'spring-tx', version: springVersion, transitive: true],
-    [group: 'org.springframework', name: 'spring-jdbc', version: springVersion, transitive: true],
-    [group: 'org.springframework', name: 'spring-orm', version: springVersion, transitive: true],
-    [group: 'org.springframework', name: 'spring-web', version: springVersion, transitive: true],
-    [group: 'org.springframework', name: 'spring-webmvc', version: springVersion, transitive: true],
-    [group: 'org.springframework', name: 'spring-context-support', version: springVersion, transitive: true],
-    [group: 'org.springframework', name: 'spring-test', version: springVersion, transitive: true],
-    // Spring Security
-    [group: 'org.springframework.security', name: 'spring-security-core', version: springSecurityVersion, transitive: true],
-    [group: 'org.springframework.security', name: 'spring-security-config', version: springSecurityVersion, transitive: true],
-    [group: 'org.springframework.security', name: 'spring-security-web', version: springSecurityVersion, transitive: true],
-    [group: 'org.springframework.security', name: 'spring-security-taglibs', version: springSecurityVersion, transitive: true],
-    // Spring Data JPA
-    [group: 'org.springframework.data', name: 'spring-data-jpa', version: '1.0.0.RELEASE' , transitive: true],
-    // AspectJ
-    [group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion, transitive: true],
-    [group: 'org.aspectj', name: 'aspectjrt', version: aspectjVersion, transitive: true],
-    // Apache Tiles
-    [group: 'org.apache.tiles', name: 'tiles-core', version: tilesVersion, transitive: true],
-    [group: 'org.apache.tiles', name: 'tiles-jsp', version: tilesVersion, transitive: true],
-    // Apache Commons
-    [group: 'commons-fileupload', name: 'commons-fileupload', version: '1.2.1', transitive: true],
-    [group: 'commons-digester', name: 'commons-digester', version: '2.0', transitive: true],
-    [group: 'commons-lang', name: 'commons-lang', version: '2.6', transitive: true],
-    [group: 'commons-pool', name: 'commons-pool', version: '1.5.4', transitive: true],
-    [group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4', transitive: true],
-    // SLF4J
-    [group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion, transitive: true],
-    [group: 'org.slf4j', name: 'jcl-over-slf4j', version: slf4jVersion, transitive: true],
-    [group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4jVersion, transitive: true],
-    // Log4j
-    [group: 'log4j', name: 'log4j', version: '1.2.16', transitive: true],
-    // Other
-    [group: 'joda-time', name: 'joda-time', version: '1.6', transitive: true],
-    //[group: 'cglib', name: 'cglib-nodep', version: '2.2', transitive: true],
-    [group: 'net.sf.flexjson', name: 'flexjson', version: '2.1', transitive: true],
-    // Hibernate
-    [group: 'org.hibernate', name: 'hibernate-core', version: '3.6.6.Final', transitive: true],
-    [group: 'org.hibernate', name: 'hibernate-validator', version: '4.2.0.Final', transitive: true],
-    [group: 'org.hibernate', name: 'hibernate-entitymanager', version: '3.6.6.Final', transitive: true],
-    [group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.0-api', version: '1.0.1.Final', transitive: true],
-    // Database
-    [group: 'org.hsqldb', name: 'hsqldb', version: '2.2.4', transitive: true],
-    [group: 'mysql', name: 'mysql-connector-java', version: '5.1.17', transitive: true],
-    // Javax
-    [group: 'javax.mail', name: 'mail', version: '1.4.1', transitive: true],
-    [group: 'javax.activation', name: 'activation', version: '1.1.1', transitive: true],
-    [group: 'javax.servlet', name: 'jstl', version: '1.2', transitive: true],
-    [group: 'javax.transaction', name: 'jta', version: '1.1', transitive: true],
-    [group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA', transitive: true]
-  ) 
+          // ** Spring **
+          "org.springframework:spring-core:$springVersion",
+          "org.springframework:spring-context:$springVersion",
+          "org.springframework:spring-aop:$springVersion",
+          "org.springframework:spring-aspects:$springVersion",
+          "org.springframework:spring-tx:$springVersion",
+          "org.springframework:spring-jdbc:$springVersion",
+          "org.springframework:spring-orm:$springVersion",
+          "org.springframework:spring-web:$springVersion",
+          "org.springframework:spring-webmvc:$springVersion",
+          "org.springframework:spring-context-support:$springVersion",
+          "org.springframework:spring-test:$springVersion",
+          // ** Spring Security **
+          "org.springframework.security:spring-security-core:$springSecurityVersion",
+          "org.springframework.security:spring-security-config:$springSecurityVersion",
+          "org.springframework.security:spring-security-web:$springSecurityVersion",
+          "org.springframework.security:spring-security-taglibs:$springSecurityVersion",
+          // ** Spring Data JPA **
+          'org.springframework.data:spring-data-jpa:1.0.0.RELEASE',
+          // ** AspectJ **
+          "org.aspectj:aspectjweaver:$aspectjVersion",
+          "org.aspectj:aspectjrt:$aspectjVersion",
+          // ** Apache Tiles **
+          "org.apache.tiles:tiles-core:$tilesVersion",
+          "org.apache.tiles:tiles-jsp:$tilesVersion",
+          // ** Apache Commons **
+          'commons-fileupload:commons-fileupload:1.2.1',
+          'commons-digester:commons-digester:2.0',
+          'commons-lang:commons-lang:2.6',
+          'commons-pool:commons-pool:1.5.4',
+          'commons-dbcp:commons-dbcp:1.4',
+          // ** SLF4J **
+          "org.slf4j:slf4j-api:$slf4jVersion",
+          "org.slf4j:jcl-over-slf4j:$slf4jVersion",
+          "org.slf4j:slf4j-log4j12:$slf4jVersion",
+          // ** Log4j **
+          'log4j:log4j:1.2.16',
+          // ** Other **
+          'joda-time:joda-time:1.6',
+          'net.sf.flexjson:flexjson:2.1',
+          'cglib:cglib-nodep:2.2',
+          // Database
+          'org.hsqldb:hsqldb:2.2.4',
+          'mysql:mysql-connector-java:5.1.17',
+          // Javax
+          'javax.mail:mail:1.4.1',
+          'javax.activation:activation:1.1.1',
+          'javax.servlet:jstl:1.2',
+          'javax.transaction:jta:1.1',
+          'javax.validation:validation-api:1.0.0.GA'
+  )
 }
