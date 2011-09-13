@@ -20,6 +20,19 @@ The template includes:
 * Logging support using slf4j with log4j backend
 * Basic log4j configuration
 
+# Versions
+
+Spring                   3.0.5.RELEASE
+Spring Security          3.0.5.RELEASE
+Hibernate Core           3.6.6.Final
+Hibernate Entity Manager 3.6.6.Final
+SLF4J                    1.6.1
+Log4j                    1.2.16
+Tiles                    2.2.2
+MySQL Connector          5.1.17
+
+For a full list look at the build.gradle file
+
 # Requirements
 
 [gradle](http://www.gradle.org/)
@@ -30,7 +43,8 @@ The template includes:
 
 To start a new Java project based on this template simple clone it (yeah is that easy!)
 
-    > git clone --bare git@github.com:edify/java-spring-jpa-template.git your_app_name
+    > git clone git@github.com:edify/java-spring-jpa-template.git your_app_name
+    > rm -rf .git
     > git init
     > git commit -a "Initial Commit"
 

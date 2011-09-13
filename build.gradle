@@ -20,7 +20,7 @@ sourceCompatibility = '1.6'
 springVersion = '3.0.5.RELEASE'
 springSecurityVersion = '3.0.5.RELEASE'
 aspectjVersion = '1.6.11'
-tilesVersion = '2.2.1'
+tilesVersion = '2.2.2'
 slf4jVersion = '1.6.1'
 
 configurations {
