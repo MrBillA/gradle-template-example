@@ -22,14 +22,14 @@ The template includes:
 
 # Versions
 
-Spring                   3.0.5.RELEASE
-Spring Security          3.0.5.RELEASE
-Hibernate Core           3.6.6.Final
-Hibernate Entity Manager 3.6.6.Final
-SLF4J                    1.6.1
-Log4j                    1.2.16
-Tiles                    2.2.2
-MySQL Connector          5.1.17
+Spring                   3.0.5.RELEASE   
+Spring Security          3.0.5.RELEASE   
+Hibernate Core           3.6.6.Final   
+Hibernate Entity Manager 3.6.6.Final   
+SLF4J                    1.6.1   
+Log4j                    1.2.16   
+Tiles                    2.2.2   
+MySQL Connector          5.1.17   
 
 For a full list look at the build.gradle file
 
