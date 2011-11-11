@@ -17,19 +17,19 @@ The template includes:
 * Spring theme support configuration
 * Spring i18n configuration
 * A basic layout using Tiles2
-* Logging support using slf4j with log4j backend
+* Logging support using slf4j with logback backend
 * Basic logback configuration
 
 # Versions
 
-Spring                   3.0.6.RELEASE
-Spring Security          3.1.0.RC1
-Hibernate Core           3.6.8.Final
-Hibernate Entity Manager 3.6.8.Final
-SLF4J                    1.6.4
-Logback                  1.0.0
-Tiles                    2.2.2   
-MySQL Connector          5.1.18
+* Spring                   3.0.6.RELEASE
+* Spring Security          3.1.0.RC1
+* Hibernate Core           3.6.8.Final
+* Hibernate Entity Manager 3.6.8.Final
+* SLF4J                    1.6.4
+* Logback                  1.0.0
+* Tiles                    2.2.2   
+* MySQL Connector          5.1.18
 
 For a full list look at the build.gradle file
 
@@ -69,6 +69,10 @@ Change the follwing in gradle.properties
 
     logbackSyslogPort=20159 # To the proper port if you are using loggly or any other syslog server
     logbackSyslogHost=logs.loggly.com # To the proper syslog server if you are using syslog
+    
+Change in spring application context XML files
+
+    change.me # To the proper package name
 
 Want to test all the config is OK
 
