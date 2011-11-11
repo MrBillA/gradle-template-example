@@ -8,6 +8,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <link href='stylesheets/normalize.css' rel='stylesheet' type='text/css'>
   <link href='stylesheets/application.css' rel='stylesheet' type='text/css'>
   <title><tiles:getAsString name="title"/></title>
 </head>
