@@ -1,0 +1,130 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'jetty'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+//** Cobertura Plugin **
+//apply from: 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/gradle_cobertura/gradle_cobertura/1.0-rc4/coberturainit.gradle'
+
+repositories {
+  mavenLocal()
+  maven {
+    url 'http://repository.springsource.com/maven/bundles/release'
+  }
+  maven {
+    url 'http://repository.springsource.com/maven/bundles/milestone'
+  }
+  maven {
+    url 'http://maven.springframework.org/milestone'
+  }
+  maven {
+    url 'https://repository.jboss.org/nexus/content/repositories/releases/'
+  }
+  mavenCentral()
+}
+
+version = '1.0-SNAPSHOT'
+group = 'change.me'
+projectName = 'changeme'
+
+targetCompatibility = '1.6'
+sourceCompatibility = '1.6'
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+configurations {
+  compile.transitive = true
+  testCompile.transitive = true
+  all*.exclude group: 'commons-logging'
+}
+
+war {
+  baseName = projectName
+}
+
+processResources {
+  filter(org.apache.tools.ant.filters.ReplaceTokens,
+          tokens: [logbackSyslogHost: logbackSyslogHost, logbackSyslogPort: logbackSyslogPort, logbackAppender: logbackAppender])
+}
+
+//*** Versions ***
+springVersion = '3.0.6.RELEASE'
+springSecurityVersion = '3.1.0.RC3'
+aspectjVersion = '1.6.12'
+tilesVersion = '2.2.2'
+slf4jVersion = '1.6.4'
+
+hibernate = [
+        'org.hibernate:hibernate-core:3.6.8.Final',
+        'org.hibernate:hibernate-validator:4.2.0.Final',
+        'org.hibernate:hibernate-entitymanager:3.6.8.Final',
+        'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final',
+]
+
+dependencies {
+  providedRuntime('javax.servlet:servlet-api:2.5', 'javax.el:el-api:1.0', 'javax.servlet.jsp:jsp-api:2.1')
+  testRuntime('junit:junit:4.8.2', 'org.easymock:easymock:3.0')
+  // ** Hibernate **
+  hibernate.collect {
+    runtime(it) {
+      exclude(group: 'cglib', name: 'cglib')
+      exclude(group: 'dom4j', name: 'dom4j')
+    }
+  }
+  runtime(
+          // ** Spring **
+          "org.springframework:spring-core:$springVersion",
+          "org.springframework:spring-context:$springVersion",
+          "org.springframework:spring-aop:$springVersion",
+          "org.springframework:spring-aspects:$springVersion",
+          "org.springframework:spring-tx:$springVersion",
+          "org.springframework:spring-jdbc:$springVersion",
+          "org.springframework:spring-orm:$springVersion",
+          "org.springframework:spring-web:$springVersion",
+          "org.springframework:spring-webmvc:$springVersion",
+          "org.springframework:spring-context-support:$springVersion",
+          "org.springframework:spring-test:$springVersion",
+          // ** Spring Security **
+          "org.springframework.security:spring-security-core:$springSecurityVersion",
+          "org.springframework.security:spring-security-config:$springSecurityVersion",
+          "org.springframework.security:spring-security-web:$springSecurityVersion",
+          "org.springframework.security:spring-security-taglibs:$springSecurityVersion",
+          'org.springframework.security.oauth:spring-security-oauth:1.0.0.M4',
+          // ** Spring Data JPA **
+          'org.springframework.data:spring-data-jpa:1.0.0.RELEASE',
+          // ** Scribe OAuth **
+          'org.scribe:scribe:1.2.3',
+          // ** AspectJ **
+          "org.aspectj:aspectjweaver:$aspectjVersion",
+          "org.aspectj:aspectjrt:$aspectjVersion",
+          // ** Apache Tiles **
+          "org.apache.tiles:tiles-core:$tilesVersion",
+          "org.apache.tiles:tiles-jsp:$tilesVersion",
+          // ** Apache Commons **
+          'commons-fileupload:commons-fileupload:1.2.1',
+          'commons-digester:commons-digester:2.0',
+          'commons-lang:commons-lang:2.6',
+          'commons-pool:commons-pool:1.5.4',
+          'commons-dbcp:commons-dbcp:1.4',
+          'commons-codec:commons-codec:1.5',
+          // ** SLF4J **
+          "org.slf4j:slf4j-api:$slf4jVersion",
+          "org.slf4j:jcl-over-slf4j:$slf4jVersion",
+          // ** LogBack **
+          'ch.qos.logback:logback-core:1.0.0',
+          'ch.qos.logback:logback-classic:1.0.0',
+          // ** Other **
+          'joda-time:joda-time:1.6',
+          'org.codehaus.jackson:jackson-mapper-asl:1.9.1',
+          'cglib:cglib-nodep:2.2',
+          // ** Database **
+          'org.hsqldb:hsqldb:2.2.4',
+          'mysql:mysql-connector-java:5.1.18',
+          // ** Javax **
+          'javax.mail:mail:1.4.1',
+          'javax.activation:activation:1.1.1',
+          'javax.servlet:jstl:1.2',
+          'javax.transaction:jta:1.1',
+          'javax.validation:validation-api:1.0.0.GA',
+  )
+}
