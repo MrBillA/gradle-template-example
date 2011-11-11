@@ -3,22 +3,22 @@
 <tiles-definitions>
 
    <definition extends="default" name="index">
-      <put-attribute name="body" value="/WEB-INF/views/index.jspx"/>
+      <put-attribute name="body" value="/WEB-INF/views/index.jsp"/>
    </definition>
 
    <definition extends="public" name="dataAccessFailure">
-      <put-attribute name="body" value="/WEB-INF/views/dataAccessFailure.jspx"/>
+      <put-attribute name="body" value="/WEB-INF/views/dataAccessFailure.jsp"/>
    </definition>
 
    <definition extends="public" name="resourceNotFound">
-      <put-attribute name="body" value="/WEB-INF/views/resourceNotFound.jspx"/>
+      <put-attribute name="body" value="/WEB-INF/views/resourceNotFound.jsp"/>
    </definition>
 
    <definition extends="public" name="uncaughtException">
-      <put-attribute name="body" value="/WEB-INF/views/uncaughtException.jspx"/>
+      <put-attribute name="body" value="/WEB-INF/views/uncaughtException.jsp"/>
    </definition>
 
    <definition extends="public" name="login">
-      <put-attribute name="body" value="/WEB-INF/views/login.jspx"/>
+      <put-attribute name="body" value="/WEB-INF/views/login.jsp"/>
    </definition>
 </tiles-definitions>

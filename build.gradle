@@ -18,7 +18,10 @@ repositories {
     url 'http://maven.springframework.org/milestone'
   }
   maven {
-    url 'https://repository.jboss.org/nexus/content/repositories/releases/'
+    url 'https://repository.jboss.org/nexus/content/repositories/releases'
+  }
+  maven {
+    url 'http://sass-java.googlecode.com/svn/repo'
   }
   mavenCentral()
 }
@@ -42,6 +45,10 @@ war {
   baseName = projectName
 }
 
+jettyRun {
+  additionalRuntimeJars = project.sourceSets.main.runtimeClasspath
+}
+
 processResources {
   filter(org.apache.tools.ant.filters.ReplaceTokens,
           tokens: [logbackSyslogHost: logbackSyslogHost, logbackSyslogPort: logbackSyslogPort, logbackAppender: logbackAppender])
@@ -62,16 +69,16 @@ hibernate = [
 ]
 
 dependencies {
-  providedRuntime('javax.servlet:servlet-api:2.5', 'javax.el:el-api:1.0', 'javax.servlet.jsp:jsp-api:2.1')
-  testRuntime('junit:junit:4.8.2', 'org.easymock:easymock:3.0')
+  providedCompile('javax.servlet:servlet-api:2.5', 'javax.el:el-api:1.0', 'javax.servlet.jsp:jsp-api:2.1')
+  testCompile('junit:junit:4.8.2', 'org.easymock:easymock:3.0')
   // ** Hibernate **
   hibernate.collect {
-    runtime(it) {
+    compile(it) {
       exclude(group: 'cglib', name: 'cglib')
       exclude(group: 'dom4j', name: 'dom4j')
     }
   }
-  runtime(
+  compile(
           // ** Spring **
           "org.springframework:spring-core:$springVersion",
           "org.springframework:spring-context:$springVersion",
@@ -100,6 +107,8 @@ dependencies {
           // ** Apache Tiles **
           "org.apache.tiles:tiles-core:$tilesVersion",
           "org.apache.tiles:tiles-jsp:$tilesVersion",
+          // ** SASS **
+          'com.sass-lang:sass-java:3.1.1.4',
           // ** Apache Commons **
           'commons-fileupload:commons-fileupload:1.2.1',
           'commons-digester:commons-digester:2.0',
