@@ -10,10 +10,10 @@
     <syslogHost>@logbackSyslogHost@</syslogHost>
     <port>@logbackSyslogPort@</port>
     <facility>LOCAL3</facility>
-    <suffixPattern>[%thread] %logger %msg</suffixPattern>
+    <suffixPattern>[%thread] %-5level %logger %msg</suffixPattern>
   </appender>
 
-  <root level="error">
+  <root level="info">
     <appender-ref ref="@logbackAppender@"/>
   </root>
 </configuration>
