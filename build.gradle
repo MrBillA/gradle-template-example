@@ -55,27 +55,29 @@ processResources {
 }
 
 //*** Versions ***
-springVersion = '3.0.6.RELEASE'
+springVersion = '3.1.0.RC1'
 springSecurityVersion = '3.1.0.RC3'
 aspectjVersion = '1.6.12'
 tilesVersion = '2.2.2'
 slf4jVersion = '1.6.4'
+hibernateVersion = '4.0.0.CR6'
 
 hibernate = [
-        'org.hibernate:hibernate-core:3.6.8.Final',
+        "org.hibernate:hibernate-core:$hibernateVersion",
         'org.hibernate:hibernate-validator:4.2.0.Final',
-        'org.hibernate:hibernate-entitymanager:3.6.8.Final',
+        "org.hibernate:hibernate-entitymanager:$hibernateVersion",
         'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final',
 ]
 
 dependencies {
   providedCompile('javax.servlet:servlet-api:2.5', 'javax.el:el-api:1.0', 'javax.servlet.jsp:jsp-api:2.1')
-  testCompile('junit:junit:4.8.2', 'org.easymock:easymock:3.0')
+  testCompile('junit:junit:4.10', 'org.easymock:easymock:3.1')
   // ** Hibernate **
   hibernate.collect {
     compile(it) {
       exclude(group: 'cglib', name: 'cglib')
       exclude(group: 'dom4j', name: 'dom4j')
+      exclude(group: 'org.jboss.spec.javax.transaction', name: 'jboss-transaction-api_1.1_spec')
     }
   }
   compile(
@@ -114,8 +116,9 @@ dependencies {
           'commons-digester:commons-digester:2.0',
           'commons-lang:commons-lang:2.6',
           'commons-pool:commons-pool:1.5.4',
-          'commons-dbcp:commons-dbcp:1.4',
           'commons-codec:commons-codec:1.5',
+          // ** BoneCP **
+          'com.jolbox:bonecp:0.7.1.RELEASE',
           // ** SLF4J **
           "org.slf4j:slf4j-api:$slf4jVersion",
           "org.slf4j:jcl-over-slf4j:$slf4jVersion",
@@ -123,9 +126,9 @@ dependencies {
           'ch.qos.logback:logback-core:1.0.0',
           'ch.qos.logback:logback-classic:1.0.0',
           // ** Other **
-          'joda-time:joda-time:1.6',
+          'joda-time:joda-time:2.0',
           'org.codehaus.jackson:jackson-mapper-asl:1.9.1',
-          'cglib:cglib-nodep:2.2',
+          'cglib:cglib-nodep:2.2.2',
           // ** Database **
           'org.hsqldb:hsqldb:2.2.4',
           'mysql:mysql-connector-java:5.1.18',

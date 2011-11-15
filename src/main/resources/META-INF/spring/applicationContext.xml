@@ -6,66 +6,87 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
-   <!--
-       This will automatically locate any and all property files you have
-       within your classpath, provided they fall under the META-INF/spring
-       directory. The located property files are parsed and their values can
-       then be used within application context files in the form of
-       ${propertyKey}.
-   -->
-   <context:property-placeholder location="classpath*:META-INF/spring/*.properties"/>
-   <!--
-       Turn on AspectJ @Configurable support. As a result, any time you
-       instantiate an object, Spring will attempt to perform dependency
-       injection on that object. This occurs for instantiation via the "new"
-       keyword, as well as via reflection.
-   -->
-   <context:spring-configured/>
-   <!--
-       This declaration will cause Spring to locate every @Component,
-       @Repository and @Service in your application. In practical terms this
-       allows you to write a POJO and then simply annotate the new POJO as an
-       @Service and Spring will automatically detect, instantiate and
-       dependency inject your service at startup time. Importantly, you can
-       then also have your new service injected into any other class that
-       requires it simply by declaring a field for your service inside the
-       relying class and Spring will inject it. Note that one exclude filters
-       is declared.
+  <!--
+      This will automatically locate any and all property files you have
+      within your classpath, provided they fall under the META-INF/spring
+      directory. The located property files are parsed and their values can
+      then be used within application context files in the form of
+      ${propertyKey}.
+  -->
+  <context:property-placeholder location="classpath*:META-INF/spring/*.properties"/>
+  <!--
+      Turn on AspectJ @Configurable support. As a result, any time you
+      instantiate an object, Spring will attempt to perform dependency
+      injection on that object. This occurs for instantiation via the "new"
+      keyword, as well as via reflection.
+  -->
+  <context:spring-configured/>
+  <!--
+      This declaration will cause Spring to locate every @Component,
+      @Repository and @Service in your application. In practical terms this
+      allows you to write a POJO and then simply annotate the new POJO as an
+      @Service and Spring will automatically detect, instantiate and
+      dependency inject your service at startup time. Importantly, you can
+      then also have your new service injected into any other class that
+      requires it simply by declaring a field for your service inside the
+      relying class and Spring will inject it. Note that one exclude filters
+      is declared.
 
-       Furthermore, this turns on @Autowired, @PostConstruct etc support. These
-       annotations allow you to use common Spring and Java Enterprise Edition
-       annotations in your classes without needing to do any special configuration.
-       The most commonly used annotation is @Autowired, which instructs Spring to
-       dependency inject an object into your class.
-   -->
-   <context:component-scan base-package="change.me">
-      <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
-   </context:component-scan>
+      Furthermore, this turns on @Autowired, @PostConstruct etc support. These
+      annotations allow you to use common Spring and Java Enterprise Edition
+      annotations in your classes without needing to do any special configuration.
+      The most commonly used annotation is @Autowired, which instructs Spring to
+      dependency inject an object into your class.
+  -->
+  <context:component-scan base-package="change.me">
+    <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
+  </context:component-scan>
 
-   <jpa:repositories base-package="change.me"/>
+  <jpa:repositories base-package="change.me"/>
 
-   <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
-      <property name="driverClassName" value="${database.driverClassName}"/>
-      <property name="url" value="${database.url}"/>
-      <property name="username" value="${database.username}"/>
-      <property name="password" value="${database.password}"/>
-      <!--<property name="validationQuery" value="SELECT 1 FROM DUAL"/>-->
-      <property name="testOnBorrow" value="true"/>
-   </bean>
-   <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
-      <property name="entityManagerFactory" ref="entityManagerFactory"/>
-   </bean>
-   <tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>
-   <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
-      <property name="dataSource" ref="dataSource"/>
-   </bean>
-   <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" id="mailSender">
-      <property name="host" value="${email.host}"/>
-   </bean>
+  <bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
+    <property name="driverClass" value="${database.driverClassName}"/>
+    <property name="jdbcUrl" value="${database.url}"/>
+    <property name="username" value="${database.username}"/>
+    <property name="password" value="${database.password}"/>
+    <property name="idleConnectionTestPeriodInMinutes" value="60"/>
+    <property name="idleMaxAgeInMinutes" value="240"/>
+    <property name="maxConnectionsPerPartition" value="30"/>
+    <property name="minConnectionsPerPartition" value="10"/>
+    <property name="partitionCount" value="3"/>
+    <property name="acquireIncrement" value="5"/>
+    <property name="statementsCacheSize" value="100"/>
+    <property name="releaseHelperThreads" value="3"/>
+  </bean>
+  <bean id="persistenceProvider" class="org.hibernate.ejb.HibernatePersistence"/>
+  <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <property name="dataSource" ref="dataSource"/>
+    <property name="persistenceProvider" ref="persistenceProvider"/>
+    <property name="jpaProperties">
+      <value>
+        hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+        <!-- value="create" to build a new database on each run; value="update" to modify an existing database; value="create-drop" means the same as "create" but also drops tables when Hibernate closes; value="validate" makes no changes to the database -->
+        hibernate.hbm2ddl.auto=update
+        hibernate.ejb.naming_strategy=org.hibernate.cfg.ImprovedNamingStrategy
+        hibernate.connection.charSet=UTF-8
+        <!-- Uncomment the following two properties for JBoss only -->
+        <!-- hibernate.validator.apply_to_ddl=false -->
+        <!-- hibernate.validator.autoregister_listeners=false -->
+      </value>
+    </property>
+    <property name="packagesToScan" value="change.me.model"/>
+  </bean>
+  <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+  </bean>
+  <tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>
+  <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" id="mailSender">
+    <property name="host" value="${email.host}"/>
+  </bean>
 </beans>

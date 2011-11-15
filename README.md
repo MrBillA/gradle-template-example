@@ -22,7 +22,7 @@ The template includes:
 
 # Versions
 
-* Spring                   3.0.6.RELEASE
+* Spring                   3.1.0.RC1
 * Spring Security          3.1.0.RC1
 * Hibernate Core           3.6.8.Final
 * Hibernate Entity Manager 3.6.8.Final
@@ -35,7 +35,7 @@ For a full list look at the build.gradle file
 
 # Requirements
 
-[gradle](http://www.gradle.org/)
+[Gradle](http://www.gradle.org/)
 
     > brew install gradle
 
@@ -84,8 +84,6 @@ Open [http://0.0.0.0:8080/edify](http://0.0.0.0:8080/edify) and you should see a
 
 * Keep checking dependencies versions and update them when necessary.
 * Add any missing dependencies if needed
-* Change the datasource config from commons-dbcp to c3p0
-* Add jQuery to the default jspx template?
 
 # LICENSE:
 
