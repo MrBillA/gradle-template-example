@@ -24,8 +24,8 @@ The template includes:
 
 * Spring                   3.1.0.RC1
 * Spring Security          3.1.0.RC1
-* Hibernate Core           3.6.8.Final
-* Hibernate Entity Manager 3.6.8.Final
+* Hibernate Core           4.0.0.CR6
+* Hibernate Entity Manager 4.0.0.CR6
 * SLF4J                    1.6.4
 * Logback                  1.0.0
 * Tiles                    2.2.2   
