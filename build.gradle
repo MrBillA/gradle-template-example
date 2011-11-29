@@ -1,9 +1,12 @@
 apply plugin: 'java'
 apply plugin: 'war'
 apply plugin: 'jetty'
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-//** Cobertura Plugin **
+apply plugin: 'groovy'
+// *** Uncomment if using Idea version < 11 ***
+//apply plugin: 'idea'
+// *** Uncomment if using eclipse ***
+//apply plugin: 'eclipse'
+// *** Cobertura Plugin ***
 //apply from: 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/gradle_cobertura/gradle_cobertura/1.0-rc4/coberturainit.gradle'
 
 repositories {
@@ -32,6 +35,11 @@ projectName = 'changeme'
 
 targetCompatibility = '1.6'
 sourceCompatibility = '1.6'
+// *** Needed for Groovy Java joint compilation ***
+//sourceSets.main.java.srcDirs = []
+//sourceSets.main.groovy.srcDir 'src/main/java'
+//sourceSets.test.java.srcDirs = []
+//sourceSets.test.groovy.srcDir 'src/test/java'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -46,7 +54,7 @@ war {
 }
 
 jettyRun {
-  additionalRuntimeJars = project.sourceSets.main.runtimeClasspath
+  contextPath = '/'
 }
 
 processResources {
@@ -55,7 +63,7 @@ processResources {
 }
 
 //*** Versions ***
-springVersion = '3.1.0.RC1'
+springVersion = '3.1.0.RC2'
 springSecurityVersion = '3.1.0.RC3'
 aspectjVersion = '1.6.12'
 tilesVersion = '2.2.2'
@@ -66,10 +74,10 @@ hibernate = [
         "org.hibernate:hibernate-core:$hibernateVersion",
         'org.hibernate:hibernate-validator:4.2.0.Final',
         "org.hibernate:hibernate-entitymanager:$hibernateVersion",
-        'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final',
-]
+        'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final']
 
 dependencies {
+  groovy('org.codehaus.groovy:groovy-all:1.8.4')
   providedCompile('javax.servlet:servlet-api:2.5', 'javax.el:el-api:1.0', 'javax.servlet.jsp:jsp-api:2.1')
   testCompile('junit:junit:4.10', 'org.easymock:easymock:3.1')
   // ** Hibernate **
