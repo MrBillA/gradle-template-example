@@ -23,13 +23,13 @@
   </appender>
 
   <appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
-    <syslogHost>@logbackSyslogHost@</syslogHost>
-    <port>@logbackSyslogPort@</port>
+    <syslogHost>@LOGBACK_SYSLOG_HOST@</syslogHost>
+    <port>@LOGBACK_SYSLOG_PORT@</port>
     <facility>LOCAL3</facility>
     <suffixPattern>[%thread] %-5level %logger{36} %msg</suffixPattern>
   </appender>
 
-  <root level="error">
-    <appender-ref ref="@logbackAppender@"/>
+  <root level="info">
+    <appender-ref ref="@LOGBACK_APPENDER@"/>
   </root>
 </configuration>

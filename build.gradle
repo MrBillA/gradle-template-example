@@ -1,52 +1,35 @@
-apply plugin: 'java'
-apply plugin: 'war'
-apply plugin: 'jetty'
-apply plugin: 'groovy'
-// *** Uncomment if using Idea version < 11 ***
-//apply plugin: 'idea'
-// *** Uncomment if using eclipse ***
-//apply plugin: 'eclipse'
-// *** Cobertura Plugin ***
-//apply from: 'https://github.com/valkolovos/gradle_cobertura/raw/master/ivy/gradle_cobertura/gradle_cobertura/1.0-rc4/coberturainit.gradle'
+apply plugin: "java"
+apply plugin: "war"
+apply plugin: "jetty"
+apply plugin: "groovy"
+apply plugin: "idea"
+apply plugin: "eclipse"
 
 repositories {
-  mavenLocal()
   maven {
-    url 'http://repository.springsource.com/maven/bundles/release'
+    url "http://repo.springsource.org/release"
   }
   maven {
-    url 'http://repository.springsource.com/maven/bundles/milestone'
+    url "http://repo.springsource.org/milestone"
   }
   maven {
-    url 'http://maven.springframework.org/milestone'
+    url "https://repository.jboss.org/nexus/content/repositories/releases"
   }
   maven {
-    url 'https://repository.jboss.org/nexus/content/repositories/releases'
-  }
-  maven {
-    url 'http://sass-java.googlecode.com/svn/repo'
+    url "http://sass-java.googlecode.com/svn/repo"
   }
   mavenCentral()
 }
 
-version = '1.0-SNAPSHOT'
-group = 'change.me'
-projectName = 'changeme'
+version     = "1.0-SNAPSHOT"
+group       = "change.me"
+projectName = "changeme"
 
-targetCompatibility = '1.6'
-sourceCompatibility = '1.6'
-// *** Needed for Groovy Java joint compilation ***
-//sourceSets.main.java.srcDirs = []
-//sourceSets.main.groovy.srcDir 'src/main/java'
-//sourceSets.test.java.srcDirs = []
-//sourceSets.test.groovy.srcDir 'src/test/java'
-
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+targetCompatibility = "1.6"
+sourceCompatibility = "1.6"
 
 configurations {
-  compile.transitive = true
-  testCompile.transitive = true
-  all*.exclude group: 'commons-logging'
+  all*.exclude group: "commons-logging"
 }
 
 war {
@@ -54,97 +37,104 @@ war {
 }
 
 jettyRun {
-  contextPath = '/'
+  contextPath = "/"
 }
 
 processResources {
   filter(org.apache.tools.ant.filters.ReplaceTokens,
-          tokens: [logbackSyslogHost: logbackSyslogHost, logbackSyslogPort: logbackSyslogPort, logbackAppender: logbackAppender])
+          tokens: [
+                  LOGBACK_SYSLOG_HOST: LOGBACK_SYSLOG_HOST,
+                  LOGBACK_SYSLOG_PORT: LOGBACK_SYSLOG_PORT,
+                  LOGBACK_APPENDER: LOGBACK_APPENDER,
+                  HIBERNATE_DIALECT: HIBERNATE_DIALECT,
+                  DATABASE_PASSWORD: DATABASE_PASSWORD,
+                  DATABASE_URL: DATABASE_URL,
+                  DATABASE_USERNAME: DATABASE_USERNAME,
+                  DATABASE_DRIVER_CLASSNAME: DATABASE_DRIVER_CLASSNAME
+          ])
 }
 
 //*** Versions ***
-springVersion = '3.1.0.RC2'
-springSecurityVersion = '3.1.0.RC3'
-aspectjVersion = '1.6.12'
-tilesVersion = '2.2.2'
-slf4jVersion = '1.6.4'
-hibernateVersion = '4.0.0.CR6'
+SPRING_VERSION          = "3.1.0.RELEASE"
+SPRING_SECURITY_VERSION = "3.1.0.RELEASE"
+ASPECTJ_VERSION         = "1.6.12"
+TILES_VERSION           = "2.2.2"
+SLF4J_VERSION           = "1.6.4"
+HIBERNATE_VERSION       = "4.0.0.CR7"
 
 hibernate = [
-        "org.hibernate:hibernate-core:$hibernateVersion",
-        'org.hibernate:hibernate-validator:4.2.0.Final',
-        "org.hibernate:hibernate-entitymanager:$hibernateVersion",
-        'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final']
+        "org.hibernate:hibernate-core:$HIBERNATE_VERSION",
+        "org.hibernate:hibernate-validator:4.2.0.Final",
+        "org.hibernate:hibernate-entitymanager:$HIBERNATE_VERSION",
+        "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"]
 
 dependencies {
-  groovy('org.codehaus.groovy:groovy-all:1.8.4')
-  providedCompile('javax.servlet:servlet-api:2.5', 'javax.el:el-api:1.0', 'javax.servlet.jsp:jsp-api:2.1')
-  testCompile('junit:junit:4.10', 'org.easymock:easymock:3.1')
+  groovy("org.codehaus.groovy:groovy-all:1.8.4")
+  providedCompile("javax.servlet:servlet-api:2.5", "javax.el:el-api:2.2", "javax.servlet.jsp:jsp-api:2.2")
+  testCompile("junit:junit:4.10", "org.easymock:easymock:3.1")
   // ** Hibernate **
   hibernate.collect {
     compile(it) {
-      exclude(group: 'cglib', name: 'cglib')
-      exclude(group: 'dom4j', name: 'dom4j')
-      exclude(group: 'org.jboss.spec.javax.transaction', name: 'jboss-transaction-api_1.1_spec')
+      exclude(group: "cglib", name: "cglib")
+      exclude(group: "dom4j", name: "dom4j")
+      exclude(group: "org.jboss.spec.javax.transaction", name: "jboss-transaction-api_1.1_spec")
     }
   }
-  compile(
-          // ** Spring **
-          "org.springframework:spring-core:$springVersion",
-          "org.springframework:spring-context:$springVersion",
-          "org.springframework:spring-aop:$springVersion",
-          "org.springframework:spring-aspects:$springVersion",
-          "org.springframework:spring-tx:$springVersion",
-          "org.springframework:spring-jdbc:$springVersion",
-          "org.springframework:spring-orm:$springVersion",
-          "org.springframework:spring-web:$springVersion",
-          "org.springframework:spring-webmvc:$springVersion",
-          "org.springframework:spring-context-support:$springVersion",
-          "org.springframework:spring-test:$springVersion",
+  compile("org.springframework.security.oauth:spring-security-oauth:1.0.0.M5") {
+    exclude(group: "org.springframework.security")
+    exclude(group: "org.springframework")
+  }
+  compile(// ** Spring **
+          "org.springframework:spring-core:$SPRING_VERSION",
+          "org.springframework:spring-context:$SPRING_VERSION",
+          "org.springframework:spring-aop:$SPRING_VERSION",
+          "org.springframework:spring-aspects:$SPRING_VERSION",
+          "org.springframework:spring-tx:$SPRING_VERSION",
+          "org.springframework:spring-jdbc:$SPRING_VERSION",
+          "org.springframework:spring-orm:$SPRING_VERSION",
+          "org.springframework:spring-web:$SPRING_VERSION",
+          "org.springframework:spring-webmvc:$SPRING_VERSION",
+          "org.springframework:spring-context-support:$SPRING_VERSION",
+          "org.springframework:spring-test:$SPRING_VERSION",
           // ** Spring Security **
-          "org.springframework.security:spring-security-core:$springSecurityVersion",
-          "org.springframework.security:spring-security-config:$springSecurityVersion",
-          "org.springframework.security:spring-security-web:$springSecurityVersion",
-          "org.springframework.security:spring-security-taglibs:$springSecurityVersion",
-          'org.springframework.security.oauth:spring-security-oauth:1.0.0.M4',
+          "org.springframework.security:spring-security-core:$SPRING_SECURITY_VERSION",
+          "org.springframework.security:spring-security-config:$SPRING_SECURITY_VERSION",
+          "org.springframework.security:spring-security-web:$SPRING_SECURITY_VERSION",
           // ** Spring Data JPA **
-          'org.springframework.data:spring-data-jpa:1.0.0.RELEASE',
+          "org.springframework.data:spring-data-jpa:1.0.2.RELEASE",
           // ** Scribe OAuth **
-          'org.scribe:scribe:1.2.3',
-          // ** AspectJ **
-          "org.aspectj:aspectjweaver:$aspectjVersion",
-          "org.aspectj:aspectjrt:$aspectjVersion",
+          "org.scribe:scribe:1.2.3",
           // ** Apache Tiles **
-          "org.apache.tiles:tiles-core:$tilesVersion",
-          "org.apache.tiles:tiles-jsp:$tilesVersion",
+          "org.apache.tiles:tiles-core:$TILES_VERSION",
+          "org.apache.tiles:tiles-jsp:$TILES_VERSION",
           // ** SASS **
-          'com.sass-lang:sass-java:3.1.1.4',
+          "com.sass-lang:sass-java:3.1.1.4",
           // ** Apache Commons **
-          'commons-fileupload:commons-fileupload:1.2.1',
-          'commons-digester:commons-digester:2.0',
-          'commons-lang:commons-lang:2.6',
-          'commons-pool:commons-pool:1.5.4',
-          'commons-codec:commons-codec:1.5',
+          "commons-fileupload:commons-fileupload:1.2.1",
+          "commons-digester:commons-digester:2.0",
+          "commons-lang:commons-lang:2.6",
+          "commons-pool:commons-pool:1.5.4",
+          "commons-codec:commons-codec:1.5",
           // ** BoneCP **
-          'com.jolbox:bonecp:0.7.1.RELEASE',
+          "com.jolbox:bonecp:0.7.1.RELEASE",
           // ** SLF4J **
-          "org.slf4j:slf4j-api:$slf4jVersion",
-          "org.slf4j:jcl-over-slf4j:$slf4jVersion",
+          "org.slf4j:slf4j-api:$SLF4J_VERSION",
+          "org.slf4j:jcl-over-slf4j:$SLF4J_VERSION",
           // ** LogBack **
-          'ch.qos.logback:logback-core:1.0.0',
-          'ch.qos.logback:logback-classic:1.0.0',
+          "ch.qos.logback:logback-core:1.0.0",
+          "ch.qos.logback:logback-classic:1.0.0",
           // ** Other **
-          'joda-time:joda-time:2.0',
-          'org.codehaus.jackson:jackson-mapper-asl:1.9.1',
-          'cglib:cglib-nodep:2.2.2',
+          "joda-time:joda-time:2.0",
+          "org.codehaus.jackson:jackson-mapper-asl:1.9.2",
+          "cglib:cglib-nodep:2.2.2",
           // ** Database **
-          'org.hsqldb:hsqldb:2.2.4',
-          'mysql:mysql-connector-java:5.1.18',
+          "org.hsqldb:hsqldb:2.2.4",
+          "mysql:mysql-connector-java:5.1.18",
           // ** Javax **
-          'javax.mail:mail:1.4.1',
-          'javax.activation:activation:1.1.1',
-          'javax.servlet:jstl:1.2',
-          'javax.transaction:jta:1.1',
-          'javax.validation:validation-api:1.0.0.GA',
+          "javax.mail:mail:1.4.1",
+          "javax.activation:activation:1.1.1",
+          "javax.servlet:jstl:1.2",
+          "javax.transaction:jta:1.1",
+          "javax.validation:validation-api:1.0.0.GA",
   )
 }

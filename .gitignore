@@ -1,4 +1,4 @@
-.redcar
+*.log
 .sass-cache
 .gradle
 build
