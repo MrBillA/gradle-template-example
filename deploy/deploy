@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -e
+
+echo ===> Stopping tomcat6 service
+sudo service tomcat6 stop
+
+echo ===> Building project
+gradle clean build -x test
+
+echo ===> Remove previous war
+sudo rm -rf /var/lib/tomcat6/webapps/ROOT*
+
+echo ===> Moving new war to the webapps dir
+cp build/libs/changeme-1.0-SNAPSHOT.war /var/lib/tomcat6/webapps/ROOT.war
+
+echo ===> Starting tomcat6 service
+sudo service tomcat6 start

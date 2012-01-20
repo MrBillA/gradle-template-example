@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -e
+oldrev=$1
+newrev=$2
+
+run() {
+  [ -x $1 ] && $1 $oldrev $newrev
+}
+
+# Add the change files to the build log
+echo ====================
+echo files changed: $(git diff $oldrev $newrev --diff-filter=ACDMR --name-only | wc -l)
+echo ====================
+
+umask 002
+
+# Sync any git submodules and update them
+git submodule init && git submodule sync && git submodule update
+
+# Run the deploy script
+run deploy/deploy
+
+# Clean all
+git clean -d -x -f
+
+# Gzip the build log file
+gzip /srv/logs/deploy-$newrev.log

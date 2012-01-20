@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require "rubygems"
+require "pony"
+
+oldrev, newrev = ARGV
+
+git_log = `git log #{oldrev}..#{newrev}`
+
+Pony.mail(:to          => "admin@edify.cr",
+          :from        => "deploy@edify.cr",
+          :subject     => "Deploy CHANGEME APP on #{`hostname`.strip}",
+          :body        => "Old revision: #{oldrev}\nNew revision: #{newrev}\n\n\nChangelog:\n\n#{git_log}",
+          :via         => :sendmail,
+          :via_options => {},
+          :attachments => {"deploy.log" => File.read("/srv/logs/deploy-#{newrev}.log")})
