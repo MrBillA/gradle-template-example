@@ -75,7 +75,6 @@ dependencies {
   hibernate.collect {
     compile(it) {
       exclude(group: "cglib", name: "cglib")
-      exclude(group: "dom4j", name: "dom4j")
       exclude(group: "org.jboss.spec.javax.transaction", name: "jboss-transaction-api_1.1_spec")
     }
   }
