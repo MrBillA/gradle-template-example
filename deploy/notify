@@ -5,7 +5,11 @@ require "pony"
 
 oldrev, newrev = ARGV
 
-git_log = `git log #{oldrev}..#{newrev}`
+if oldrev != "0000000000000000000000000000000000000000"
+  git_log = `git log #{oldrev}..#{newrev}`
+else
+  git_log = `git log`
+end
 
 Pony.mail(:to          => "admin@edify.cr",
           :from        => "deploy@edify.cr",

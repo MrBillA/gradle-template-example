@@ -7,10 +7,12 @@ run() {
   [ -x $1 ] && $1 $oldrev $newrev
 }
 
-# Add the change files to the build log
-echo ====================
-echo files changed: $(git diff $oldrev $newrev --diff-filter=ACDMR --name-only | wc -l)
-echo ====================
+if [ -z "${oldrev//0}" ]; then
+  # Add the change files to the build log
+  echo ====================
+  echo files changed: $(git diff $oldrev $newrev --diff-filter=ACDMR --name-only | wc -l)
+  echo ====================
+fi
 
 umask 002
 
