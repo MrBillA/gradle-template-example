@@ -28,5 +28,8 @@ git clean -d -x -f
 # Gzip the build log file
 gzip /srv/logs/deploy-$newrev.log
 
+# All good tag the build
+git tag build-${date +%s}
+
 # Notify
 run deploy/notify

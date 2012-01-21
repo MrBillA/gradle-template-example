@@ -17,4 +17,4 @@ Pony.mail(:to          => "admin@edify.cr",
           :body        => "Old revision: #{oldrev}\nNew revision: #{newrev}\n\n\nChangelog:\n\n#{git_log}",
           :via         => :sendmail,
           :via_options => {},
-          :attachments => {"deploy.log" => File.read("/srv/logs/deploy-#{newrev}.log")})
+          :attachments => {"deploy.log.gz" => File.read("/srv/logs/deploy-#{newrev}.log.gz")})

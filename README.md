@@ -22,10 +22,10 @@ The template includes:
 
 # Versions
 
-* Spring                   3.1.0.RC1
-* Spring Security          3.1.0.RC1
-* Hibernate Core           4.0.0.CR6
-* Hibernate Entity Manager 4.0.0.CR6
+* Spring                   3.1.0.RELEASE
+* Spring Security          3.1.0.RELEASE
+* Hibernate Core           4.0.1.Final
+* Hibernate Entity Manager 4.0.1.Final
 * SLF4J                    1.6.4
 * Logback                  1.0.0
 * Tiles                    2.2.2   
@@ -74,7 +74,7 @@ Change in spring application context XML files
 
     change.me # To the proper package name
 
-Want to test all the config is OK
+Test the app
 
     > gradle jettyRun
 
