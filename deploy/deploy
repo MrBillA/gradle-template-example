@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 set -e
 
-echo ===> Stopping tomcat6 service
+echo "===> Stopping tomcat6 service"
 sudo service tomcat6 stop
 
-echo ===> Building project
+echo "===> Building project"
 gradle -PLOGBACK_APPENDER=FILE clean build -x test
 
-echo ===> Remove previous war
+echo "===> Remove previous war"
 sudo rm -rf /var/lib/tomcat6/webapps/ROOT*
 
-echo ===> Moving new war to the webapps dir
+echo "===> Moving new war to the webapps dir"
 sudo cp build/libs/changeme-1.0-SNAPSHOT.war /var/lib/tomcat6/webapps/ROOT.war
 
-echo ===> Starting tomcat6 service
+echo "===> Starting tomcat6 service"
 sudo service tomcat6 start
