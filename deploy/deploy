@@ -5,7 +5,7 @@ echo ===> Stopping tomcat6 service
 sudo service tomcat6 stop
 
 echo ===> Building project
-gradle clean build -x test
+gradle -PLOGBACK_APPENDER=FILE clean build -x test
 
 echo ===> Remove previous war
 sudo rm -rf /var/lib/tomcat6/webapps/ROOT*
