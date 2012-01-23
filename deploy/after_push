@@ -7,29 +7,22 @@ run() {
   [ -x $1 ] && $1 $oldrev $newrev
 }
 
-if [ -z "${oldrev//0}" ]; then
-  # Add the change files to the build log
-  echo ====================
-  echo files changed: $(git diff $oldrev $newrev --diff-filter=ACDMR --name-only | wc -l)
-  echo ====================
-fi
-
 umask 002
 
 # Sync any git submodules and update them
 git submodule init && git submodule sync && git submodule update
 
 # Run the deploy script
+set +e
 run deploy/deploy
+if [ "$?" -ne 0 ]; then
+  echo "===> Deploy Fail"; exit 1;
+else
+  run deploy/notify
+  # Clean all
+  git clean -d -x -f
 
-# Clean all
-git clean -d -x -f
-
-# Gzip the build log file
-gzip /srv/logs/deploy-$newrev.log
-
-# All good tag the build
-git tag build-$(date +%s)
-
-# Notify
-run deploy/notify
+  # All good tag the build
+  git tag build-$(date +%s)
+fi
+set -e

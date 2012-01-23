@@ -5,10 +5,10 @@ require "pony"
 
 oldrev, newrev = ARGV
 
-if oldrev != "0000000000000000000000000000000000000000"
-  git_log = `git log #{oldrev}..#{newrev}`
+if oldrev =~ /^0+$/
+  git_log = `git log --stat #{oldrev}..#{newrev}`
 else
-  git_log = `git log`
+  git_log = `git log --stat`
 end
 
 Pony.mail(:to          => "admin@edify.cr",
@@ -16,5 +16,4 @@ Pony.mail(:to          => "admin@edify.cr",
           :subject     => "Deploy CHANGEME APP on #{`hostname`.strip}",
           :body        => "Old revision: #{oldrev}\nNew revision: #{newrev}\n\n\nChangelog:\n\n#{git_log}",
           :via         => :sendmail,
-          :via_options => {},
-          :attachments => {"deploy.log.gz" => File.read("/srv/logs/deploy-#{newrev}.log.gz")})
+          :via_options => {}
