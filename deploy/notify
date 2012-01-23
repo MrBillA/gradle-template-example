@@ -6,9 +6,9 @@ require "pony"
 oldrev, newrev = ARGV
 
 if oldrev =~ /^0+$/
-  git_log = `git log --stat #{oldrev}..#{newrev}`
-else
   git_log = `git log --stat`
+else
+  git_log = `git log --stat #{oldrev}..#{newrev}`
 end
 
 Pony.mail(:to          => "admin@edify.cr",
