@@ -25,6 +25,6 @@ else
 
   echo "===> Tagging the build"
   # All good tag the build
-  git tag build-$(date +%s)
+  git tag build-$(date -u +%Y%m%d-%H%M%S%z)
 fi
 set -e
