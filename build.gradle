@@ -148,7 +148,7 @@ dependencies {
   runtime "javax.transaction:jta:1.1"
   runtime "javax.validation:validation-api:1.0.0.GA"
 
-  def tomcatVersion = "6.0.29"
+  def tomcatVersion = "6.0.35"
   tomcat "org.apache.tomcat:catalina:${tomcatVersion}"
   tomcat "org.apache.tomcat:coyote:${tomcatVersion}"
   tomcat "org.apache.tomcat:jasper:${tomcatVersion}"
