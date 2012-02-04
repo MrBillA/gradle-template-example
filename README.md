@@ -76,9 +76,9 @@ Change in spring application context XML files
 
 Test the app
 
-    > gradle jettyRun
+    > gradle tomcatRun
 
-Open [http://0.0.0.0:8080/edify](http://0.0.0.0:8080/edify) and you should see a nice **Hello World!**
+Open [http://0.0.0.0:8080/](http://0.0.0.0:8080/) and you should see a nice **Hello World!**
 
 # TODO
 

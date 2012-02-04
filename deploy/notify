@@ -6,14 +6,21 @@ require "pony"
 oldrev, newrev = ARGV
 
 if oldrev =~ /^0+$/
-  git_log = `git log --stat`
+  git_log = "https://github.com/edify/java-spring-jpa-template/commits/master/"
 else
-  git_log = `git log --stat #{oldrev}..#{newrev}`
+  git_log = "https://github.com/edify/java-spring-jpa-template/compare/#{oldrev}...#{newrev}"
 end
 
 Pony.mail(:to          => "admin@edify.cr",
           :from        => "deploy@edify.cr",
           :subject     => "Deploy CHANGEME APP on #{`hostname`.strip}",
           :body        => "Old revision: #{oldrev}\nNew revision: #{newrev}\n\n\nChangelog:\n\n#{git_log}",
-          :via         => :sendmail,
-          :via_options => {})
+          :via => :smtp,
+          :via_options => { :address        => 'smtp.sendgrid.net',
+                            :port           => '587',
+                            :domain         => 'edify.cr',
+                            :user_name      => ENV['SENDGRID_USERNAME'],
+                            :password       => ENV['SENDGRID_PASSWORD'],
+                            :authentication => 'plain',
+                            :enable_starttls_auto => true
+                          })
