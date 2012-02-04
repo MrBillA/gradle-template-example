@@ -35,9 +35,25 @@ For a full list look at the build.gradle file
 
 # Requirements
 
-[Gradle](http://www.gradle.org/)
+## For backend development
+
+[gradle](http://www.gradle.org/)
 
     > brew install gradle
+
+## For frontend development (less, javascript, css)
+
+[yuicompressor](http://developer.yahoo.com/yui/compressor/)
+
+    > brew install yuicompressor
+
+[guard](https://github.com/guard/guard)
+
+    > gem install guard
+
+[guard-less](https://github.com/guard/guard-less)
+
+    > gem install guard-less
 
 # Usage
 
@@ -79,6 +95,19 @@ Test the app
     > gradle tomcatRun
 
 Open [http://0.0.0.0:8080/](http://0.0.0.0:8080/) and you should see a nice **Hello World!**
+
+# Development tasks
+
+For compiling less files:
+
+    > guard
+
+This would check changes on the less files and recompile them to CSS and keep watching until CTRL-C
+
+Compressing CSS and Javascript
+
+    > gradle compressCss
+    > gradle compressJs
 
 # TODO
 

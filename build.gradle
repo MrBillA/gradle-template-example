@@ -25,9 +25,6 @@ repositories {
   maven {
     url "http://repo.springsource.org/milestone"
   }
-  maven {
-    url "http://sass-java.googlecode.com/svn/repo"
-  }
   mavenCentral()
 }
 
@@ -48,6 +45,30 @@ war {
 
 tomcatRun {
   contextPath = "/"
+}
+
+task compileLess << {
+  //Compile all less files
+  workingDir = "src/main/webapp/WEB-INF/less"
+  ["application.less"].each {
+    filename = ((new File(it)).name =~ /^(.+)\.less/)[0][1]
+    out = new File("src/main/webapp/css/${filename}.css")
+    out.write("lessc $it".execute(null, new File(workingDir)).getText())
+  }
+  //Compile bootstrap
+  workingDir += "/bootstrap"
+  out = new File("src/main/webapp/css/bootstrap.css")
+  out.write("lessc bootstrap.less".execute(null, new File(workingDir)).getText())
+}
+
+task compressCss(dependsOn: [":compileLess"]) << {
+  workingDir = "src/main/webapp/css"
+  "yuicompressor -o '.css\$:.css' *.css".execute(null, new File(workingDir))
+}
+
+task compressJs << {
+  workingDir = "src/main/webapp/js/bootstrap"
+  "yuicompressor -o '.js\$:-min.js' *.js".execute(null, new File(workingDir))
 }
 
 processResources {
@@ -116,8 +137,6 @@ dependencies {
   // ** Apache Tiles **
   runtime "org.apache.tiles:tiles-core:$TILES_VERSION"
   runtime "org.apache.tiles:tiles-jsp:$TILES_VERSION"
-  // ** SASS **
-  runtime "com.sass-lang:sass-java:3.1.1.4"
   // ** Apache Commons **
   runtime "commons-fileupload:commons-fileupload:1.2.2"
   runtime "commons-digester:commons-digester:2.1"
