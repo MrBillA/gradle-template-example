@@ -98,16 +98,20 @@ Open [http://0.0.0.0:8080/](http://0.0.0.0:8080/) and you should see a nice **He
 
 # Development tasks
 
-For compiling less files:
+Compiling less files:
 
     > guard
 
 This would check changes on the less files and recompile them to CSS and keep watching until CTRL-C
 
-Compressing CSS and Javascript
+Compressing CSS and Javascript:
 
     > gradle compressCss
     > gradle compressJs
+
+Compiling Less manually:
+
+    > gradle compileLess
 
 # TODO
 
