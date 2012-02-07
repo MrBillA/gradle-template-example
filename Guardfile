@@ -5,3 +5,5 @@ guard 'less', :all_on_start => true, :all_after_change => true, :output => 'src/
   watch(%r{^.+bootstrap\.less$})
   watch(%r{^.+application\.less$})
 end
+
+guard 'coffeescript', :input => 'src/main/webapp/WEB-INF/coffeescript', :output => 'src/main/webapp/js', :all_on_start => true

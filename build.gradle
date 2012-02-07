@@ -19,6 +19,10 @@ apply plugin: "idea"
 apply plugin: "eclipse"
 
 repositories {
+  add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+    name = "Edify S3"
+    addArtifactPattern "https://s3.amazonaws.com/edify-soft/[organisation]/[module]/[module]-[revision].[ext]"
+  }
   maven {
     url "http://repo.springsource.org/release"
   }
@@ -37,6 +41,7 @@ sourceCompatibility = "1.6"
 
 configurations {
   all*.exclude group: "commons-logging"
+  yui
 }
 
 war {
@@ -50,8 +55,8 @@ tomcatRun {
 task installDeps << {
   println "\u001b[0;32m===> Installing YUICompressor\u001b[m"
   println "brew install yuicompressor".execute().getText()
-  println "\u001b[0;32m===> Installing guard, less and guard-less\u001b[m"
-  println "gem install guard guard-less".execute().getText()
+  println "\u001b[0;32m===> Installing guard, less, guard-less and guard-coffeescript\u001b[m"
+  println "gem install guard guard-less guard-coffeescript foreman".execute().getText()
 }
 
 task compileLess << {
@@ -71,14 +76,36 @@ task compileLess << {
 
 task compressCss(dependsOn: [":compileLess"]) << {
   println "\u001b[0;32m===> Compressing CSS\u001b[m"
-  workingDir = "src/main/webapp/css"
-  "yuicompressor -o '.css\$:.css' *.css".execute([], new File(workingDir))
+  ant {
+    taskdef(name: "yuicompressor",
+            classname: "net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask",
+            classpath: configurations.yui.asPath)
+    yuicompressor(jsSuffix: "-min.js", cssSuffix: "-min.css", fromDir: "src/main/webapp/css", toDir: "src/main/webapp/css") {
+      include(name: "*.css")
+      exclude(name: "*-min.css")
+    }
+  }
 }
 
-task compressJs << {
+task compileCoffeScript << {
+  println "\u001b[0;32m===> Compiling CoffeScript\u001b[m"
+  workingDir = "src/main/webapp/WEB-INF/coffeescript"
+  println "coffee --compile --output src/main/webapp/js $workingDir".execute().getText()
+}
+
+task compressJs(dependsOn: [":compileCoffeScript"]) << {
   println "\u001b[0;32m===> Compressing Javascript\u001b[m"
-  workingDir = "src/main/webapp/js/bootstrap"
-  "yuicompressor -o '.js\$:-min.js' *.js".execute([], new File(workingDir))
+  ant {
+    taskdef(name: "yuicompressor",
+            classname: "net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask",
+            classpath: configurations.yui.asPath)
+    ["src/main/webapp/js", "src/main/webapp/js/bootstrap"].each {
+      yuicompressor(jsSuffix: "-min.js", cssSuffix: "-min.css", fromDir: it, toDir: it) {
+        include(name: "*.js")
+        exclude(name: "*-min.js")
+      }
+    }
+  }  
 }
 
 task compressAll(dependsOn: [":compressCss", ":compressJs"])
@@ -117,70 +144,72 @@ dependencies {
   testCompile("junit:junit:4.10", "org.easymock:easymock:3.1")
   // ** Hibernate **
   hibernate.collect {
-    runtime(it) {
+    compile(it) {
       exclude(group: "cglib", module: "cglib")
       exclude(group: "org.jboss.spec.javax.transaction", module: "jboss-transaction-api_1.1_spec")
     }
   }
-  runtime("org.springframework.security.oauth:spring-security-oauth:1.0.0.M5") {
+  compile("org.springframework.security.oauth:spring-security-oauth:1.0.0.M5") {
     exclude(group: "org.springframework.security")
     exclude(group: "org.springframework")
   }
   // ** Spring **
-  runtime "org.springframework:spring-core:$SPRING_VERSION"
-  runtime "org.springframework:spring-context:$SPRING_VERSION"
-  runtime "org.springframework:spring-aop:$SPRING_VERSION"
-  runtime "org.springframework:spring-aspects:$SPRING_VERSION"
-  runtime "org.springframework:spring-tx:$SPRING_VERSION"
-  runtime "org.springframework:spring-jdbc:$SPRING_VERSION"
-  runtime "org.springframework:spring-orm:$SPRING_VERSION"
-  runtime "org.springframework:spring-web:$SPRING_VERSION"
-  runtime "org.springframework:spring-webmvc:$SPRING_VERSION"
-  runtime "org.springframework:spring-context-support:$SPRING_VERSION"
-  runtime "org.springframework:spring-test:$SPRING_VERSION"
+  compile "org.springframework:spring-core:$SPRING_VERSION"
+  compile "org.springframework:spring-context:$SPRING_VERSION"
+  compile "org.springframework:spring-aop:$SPRING_VERSION"
+  compile "org.springframework:spring-aspects:$SPRING_VERSION"
+  compile "org.springframework:spring-tx:$SPRING_VERSION"
+  compile "org.springframework:spring-jdbc:$SPRING_VERSION"
+  compile "org.springframework:spring-orm:$SPRING_VERSION"
+  compile "org.springframework:spring-web:$SPRING_VERSION"
+  compile "org.springframework:spring-webmvc:$SPRING_VERSION"
+  compile "org.springframework:spring-context-support:$SPRING_VERSION"
+  compile "org.springframework:spring-test:$SPRING_VERSION"
   // ** Spring Security **
-  runtime "org.springframework.security:spring-security-core:$SPRING_SECURITY_VERSION"
-  runtime "org.springframework.security:spring-security-config:$SPRING_SECURITY_VERSION"
-  runtime "org.springframework.security:spring-security-web:$SPRING_SECURITY_VERSION"
+  compile "org.springframework.security:spring-security-core:$SPRING_SECURITY_VERSION"
+  compile "org.springframework.security:spring-security-config:$SPRING_SECURITY_VERSION"
+  compile "org.springframework.security:spring-security-web:$SPRING_SECURITY_VERSION"
   // ** Spring Data JPA **
-  runtime "org.springframework.data:spring-data-jpa:1.0.2.RELEASE"
+  compile "org.springframework.data:spring-data-jpa:1.0.2.RELEASE"
   // ** Scribe OAuth **
-  runtime "org.scribe:scribe:1.3.0"
+  compile "org.scribe:scribe:1.3.0"
   // ** Apache Tiles **
-  runtime "org.apache.tiles:tiles-core:$TILES_VERSION"
-  runtime "org.apache.tiles:tiles-jsp:$TILES_VERSION"
+  compile "org.apache.tiles:tiles-core:$TILES_VERSION"
+  compile "org.apache.tiles:tiles-jsp:$TILES_VERSION"
   // ** Apache Commons **
-  runtime "commons-fileupload:commons-fileupload:1.2.2"
-  runtime "commons-digester:commons-digester:2.1"
-  runtime "commons-lang:commons-lang:2.6"
-  runtime "commons-pool:commons-pool:1.6"
-  runtime "commons-codec:commons-codec:1.6"
+  compile "commons-fileupload:commons-fileupload:1.2.2"
+  compile "commons-digester:commons-digester:2.1"
+  compile "commons-lang:commons-lang:2.6"
+  compile "commons-pool:commons-pool:1.6"
+  compile "commons-codec:commons-codec:1.6"
   // ** BoneCP **
-  runtime "com.jolbox:bonecp:0.7.1.RELEASE"
+  compile "com.jolbox:bonecp:0.7.1.RELEASE"
   // ** FlyWay **
-  runtime "com.googlecode.flyway:flyway-core:1.5"
+  compile "com.googlecode.flyway:flyway-core:1.5"
   // ** SLF4J **
-  runtime "org.slf4j:slf4j-api:$SLF4J_VERSION"
-  runtime "org.slf4j:jcl-over-slf4j:$SLF4J_VERSION"
+  compile "org.slf4j:slf4j-api:$SLF4J_VERSION"
+  compile "org.slf4j:jcl-over-slf4j:$SLF4J_VERSION"
   // ** LogBack **
-  runtime "ch.qos.logback:logback-core:1.0.0"
-  runtime "ch.qos.logback:logback-classic:1.0.0"
+  compile "ch.qos.logback:logback-core:1.0.0"
+  compile "ch.qos.logback:logback-classic:1.0.0"
   // ** Other **
-  runtime "joda-time:joda-time:2.0"
-  runtime "org.codehaus.jackson:jackson-mapper-asl:1.9.3"
-  runtime "cglib:cglib-nodep:2.2.2"
+  compile "joda-time:joda-time:2.0"
+  compile "org.codehaus.jackson:jackson-mapper-asl:1.9.3"
+  compile "cglib:cglib-nodep:2.2.2"
   // ** Database **
-  runtime "org.hsqldb:hsqldb:2.2.4"
-  runtime "mysql:mysql-connector-java:5.1.18"
+  compile "org.hsqldb:hsqldb:2.2.4"
+  compile "mysql:mysql-connector-java:5.1.18"
   // ** Javax **
-  runtime "javax.mail:mail:1.4.1"
-  runtime "javax.activation:activation:1.1.1"
-  runtime "javax.servlet:jstl:1.2"
-  runtime "javax.transaction:jta:1.1"
-  runtime "javax.validation:validation-api:1.0.0.GA"
+  compile "javax.mail:mail:1.4.1"
+  compile "javax.activation:activation:1.1.1"
+  compile "javax.servlet:jstl:1.2"
+  compile "javax.transaction:jta:1.1"
+  compile "javax.validation:validation-api:1.0.0.GA"
 
   def tomcatVersion = "6.0.35"
   tomcat "org.apache.tomcat:catalina:${tomcatVersion}"
   tomcat "org.apache.tomcat:coyote:${tomcatVersion}"
   tomcat "org.apache.tomcat:jasper:${tomcatVersion}"
+  yui "com.yahoo.platform.yui:yuicompressor:2.4.6"
+  yui "noha:yui-compressor-ant-task:0.5.1"
 }
