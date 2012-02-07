@@ -47,29 +47,41 @@ tomcatRun {
   contextPath = "/"
 }
 
+task installDeps << {
+  println "\u001b[0;32m===> Installing YUICompressor\u001b[m"
+  println "brew install yuicompressor".execute().getText()
+  println "\u001b[0;32m===> Installing guard, less and guard-less\u001b[m"
+  println "gem install guard guard-less".execute().getText()
+}
+
 task compileLess << {
   //Compile all less files
+  println "\u001b[0;32m===> Compiling Less files\u001b[m"
   workingDir = "src/main/webapp/WEB-INF/less"
   ["application.less"].each {
     filename = ((new File(it)).name =~ /^(.+)\.less/)[0][1]
     out = new File("src/main/webapp/css/${filename}.css")
-    out.write("lessc $it".execute(null, new File(workingDir)).getText())
+    out.write("lessc $it".execute([], new File(workingDir)).getText())
   }
   //Compile bootstrap
   workingDir += "/bootstrap"
   out = new File("src/main/webapp/css/bootstrap.css")
-  out.write("lessc bootstrap.less".execute(null, new File(workingDir)).getText())
+  out.write("lessc bootstrap.less".execute([], new File(workingDir)).getText())
 }
 
 task compressCss(dependsOn: [":compileLess"]) << {
+  println "\u001b[0;32m===> Compressing CSS\u001b[m"
   workingDir = "src/main/webapp/css"
-  "yuicompressor -o '.css\$:.css' *.css".execute(null, new File(workingDir))
+  "yuicompressor -o '.css\$:.css' *.css".execute([], new File(workingDir))
 }
 
 task compressJs << {
+  println "\u001b[0;32m===> Compressing Javascript\u001b[m"
   workingDir = "src/main/webapp/js/bootstrap"
-  "yuicompressor -o '.js\$:-min.js' *.js".execute(null, new File(workingDir))
+  "yuicompressor -o '.js\$:-min.js' *.js".execute([], new File(workingDir))
 }
+
+task compressAll(dependsOn: [":compressCss", ":compressJs"])
 
 processResources {
   filter(org.apache.tools.ant.filters.ReplaceTokens,

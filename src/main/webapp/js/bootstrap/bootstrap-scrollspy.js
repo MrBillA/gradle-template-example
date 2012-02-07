@@ -1,1 +1,125 @@
-!function(b){function a(f,e){var g=b.proxy(this.process,this),c=b(f).is("body")?b(window):b(f),d;this.options=b.extend({},b.fn.scrollspy.defaults,e);this.$scrollElement=c.on("scroll.scroll.data-api",g);this.selector=(this.options.target||((d=b(f).attr("href"))&&d.replace(/.*(?=#[^\s]+$)/,""))||"")+" .nav li > a";this.$body=b("body").on("click.scroll.data-api",this.selector,g);this.refresh();this.process()}a.prototype={constructor:a,refresh:function(){this.targets=this.$body.find(this.selector).map(function(){var c=b(this).attr("href");return/^#\w/.test(c)&&b(c).length?c:null});this.offsets=b.map(this.targets,function(c){return b(c).position().top})},process:function(){var f=this.$scrollElement.scrollTop()+this.options.offset,e=this.offsets,c=this.targets,g=this.activeTarget,d;for(d=e.length;d--;){g!=c[d]&&f>=e[d]&&(!e[d+1]||f<=e[d+1])&&this.activate(c[d])}},activate:function(d){var c;this.activeTarget=d;this.$body.find(this.selector).parent(".active").removeClass("active");c=this.$body.find(this.selector+'[href="'+d+'"]').parent("li").addClass("active");if(c.parent(".dropdown-menu")){c.closest("li.dropdown").addClass("active")}}};b.fn.scrollspy=function(c){return this.each(function(){var f=b(this),e=f.data("scrollspy"),d=typeof c=="object"&&c;if(!e){f.data("scrollspy",(e=new a(this,d)))}if(typeof c=="string"){e[c]()}})};b.fn.scrollspy.Constructor=a;b.fn.scrollspy.defaults={offset:10};b(function(){b('[data-spy="scroll"]').each(function(){var c=b(this);c.scrollspy(c.data())})})}(window.jQuery);
+/* =============================================================
+ * bootstrap-scrollspy.js v2.0.0
+ * http://twitter.github.com/bootstrap/javascript.html#scrollspy
+ * =============================================================
+ * Copyright 2012 Twitter, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============================================================== */
+
+!function ( $ ) {
+
+  "use strict"
+
+  /* SCROLLSPY CLASS DEFINITION
+   * ========================== */
+
+  function ScrollSpy( element, options) {
+    var process = $.proxy(this.process, this)
+      , $element = $(element).is('body') ? $(window) : $(element)
+      , href
+    this.options = $.extend({}, $.fn.scrollspy.defaults, options)
+    this.$scrollElement = $element.on('scroll.scroll.data-api', process)
+    this.selector = (this.options.target
+      || ((href = $(element).attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) //strip for ie7
+      || '') + ' .nav li > a'
+    this.$body = $('body').on('click.scroll.data-api', this.selector, process)
+    this.refresh()
+    this.process()
+  }
+
+  ScrollSpy.prototype = {
+
+      constructor: ScrollSpy
+
+    , refresh: function () {
+        this.targets = this.$body
+          .find(this.selector)
+          .map(function () {
+            var href = $(this).attr('href')
+            return /^#\w/.test(href) && $(href).length ? href : null
+          })
+
+        this.offsets = $.map(this.targets, function (id) {
+          return $(id).position().top
+        })
+      }
+
+    , process: function () {
+        var scrollTop = this.$scrollElement.scrollTop() + this.options.offset
+          , offsets = this.offsets
+          , targets = this.targets
+          , activeTarget = this.activeTarget
+          , i
+
+        for (i = offsets.length; i--;) {
+          activeTarget != targets[i]
+            && scrollTop >= offsets[i]
+            && (!offsets[i + 1] || scrollTop <= offsets[i + 1])
+            && this.activate( targets[i] )
+        }
+      }
+
+    , activate: function (target) {
+        var active
+
+        this.activeTarget = target
+
+        this.$body
+          .find(this.selector).parent('.active')
+          .removeClass('active')
+
+        active = this.$body
+          .find(this.selector + '[href="' + target + '"]')
+          .parent('li')
+          .addClass('active')
+
+        if ( active.parent('.dropdown-menu') )  {
+          active.closest('li.dropdown').addClass('active')
+        }
+      }
+
+  }
+
+
+ /* SCROLLSPY PLUGIN DEFINITION
+  * =========================== */
+
+  $.fn.scrollspy = function ( option ) {
+    return this.each(function () {
+      var $this = $(this)
+        , data = $this.data('scrollspy')
+        , options = typeof option == 'object' && option
+      if (!data) $this.data('scrollspy', (data = new ScrollSpy(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  $.fn.scrollspy.Constructor = ScrollSpy
+
+  $.fn.scrollspy.defaults = {
+    offset: 10
+  }
+
+
+ /* SCROLLSPY DATA-API
+  * ================== */
+
+  $(function () {
+    $('[data-spy="scroll"]').each(function () {
+      var $spy = $(this)
+      $spy.scrollspy($spy.data())
+    })
+  })
+
+}( window.jQuery )

@@ -16,14 +16,14 @@ git submodule init && git submodule sync && git submodule update
 set +e
 run deploy/deploy
 if [ "$?" -ne 0 ]; then
-  echo "===> Deploy Fail"; exit 1;
+  echo -e "\e[0;31m===> Deploy Fail\033[0m"; exit 1;
 else
   run deploy/notify
   # Clean all
-  echo "===> Cleanup"
+  echo -e "\e[0;32m===> Cleanup\033[0m"
   git clean -d -x -f
 
-  echo "===> Tagging the build"
+  echo -e "\e[0;32m===> Tagging the build\033[0m"
   # All good tag the build
   git tag build-$(date -u +%Y%m%d-%H%M%S%z)
 fi
