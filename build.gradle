@@ -99,7 +99,7 @@ task compressJs(dependsOn: [":compileCoffeScript"]) << {
     taskdef(name: "yuicompressor",
             classname: "net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask",
             classpath: configurations.yui.asPath)
-    ["src/main/webapp/js", "src/main/webapp/js/bootstrap"].each {
+    ["src/main/webapp/js"].each {
       yuicompressor(jsSuffix: "-min.js", cssSuffix: "-min.css", fromDir: it, toDir: it) {
         include(name: "*.js")
         exclude(name: "*-min.js")
@@ -205,6 +205,8 @@ dependencies {
   compile "javax.servlet:jstl:1.2"
   compile "javax.transaction:jta:1.1"
   compile "javax.validation:validation-api:1.0.0.GA"
+  // ** Web Filters **
+  compile "net.sf.ehcache:ehcache-web:2.0.4"
 
   def tomcatVersion = "6.0.35"
   tomcat "org.apache.tomcat:catalina:${tomcatVersion}"
