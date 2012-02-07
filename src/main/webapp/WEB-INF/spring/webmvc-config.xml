@@ -8,7 +8,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
-  <context:property-placeholder location="classpath*:META-INF/spring/*.properties, /srv/config/*.properties"
+  <context:property-placeholder location="classpath*:META-INF/spring/*.properties, file:/srv/config/*.properties"
                                 ignore-resource-not-found="true"/>
 
   <!-- The controllers are autodetected POJOs labeled with the @Controller annotation. -->
@@ -40,6 +40,7 @@
       <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
         <property name="useExpiresHeader" value="true"/>
         <property name="useCacheControlHeader" value="true"/>
+        <property name="useCacheControlNoStore" value="false"/>
         <property name="cacheSeconds" value="${assets.CacheSeconds}"/>
       </bean>
     </mvc:interceptor>

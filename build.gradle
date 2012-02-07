@@ -80,7 +80,7 @@ task compressCss(dependsOn: [":compileLess"]) << {
     taskdef(name: "yuicompressor",
             classname: "net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask",
             classpath: configurations.yui.asPath)
-    yuicompressor(jsSuffix: "-min.js", cssSuffix: "-min.css", fromDir: "src/main/webapp/css", toDir: "src/main/webapp/css") {
+    yuicompressor(jsSuffix: "-min.js", cssSuffix: "-min.css", fromDir: "src/main/webapp/css", toDir: "src/main/webapp/css", warn: false) {
       include(name: "*.css")
       exclude(name: "*-min.css")
     }
@@ -100,7 +100,7 @@ task compressJs(dependsOn: [":compileCoffeScript"]) << {
             classname: "net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask",
             classpath: configurations.yui.asPath)
     ["src/main/webapp/js"].each {
-      yuicompressor(jsSuffix: "-min.js", cssSuffix: "-min.css", fromDir: it, toDir: it) {
+      yuicompressor(jsSuffix: "-min.js", cssSuffix: "-min.css", fromDir: it, toDir: it, warn: false) {
         include(name: "*.js")
         exclude(name: "*-min.js")
       }
