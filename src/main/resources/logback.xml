@@ -29,7 +29,7 @@
     <suffixPattern>[%thread] %-5level %logger{36} %msg</suffixPattern>
   </appender>
 
-  <root level="error">
+  <root level="info">
     <appender-ref ref="@LOGBACK_APPENDER@"/>
   </root>
 </configuration>
