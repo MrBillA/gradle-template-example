@@ -43,9 +43,12 @@ For a full list look at the build.gradle file
 
 ## For frontend development (less, javascript, css)
 
-[yuicompressor](http://developer.yahoo.com/yui/compressor/)
+[coffeescript](http://coffeescript.org/)
 
-    > brew install yuicompressor
+    OSX> brew install coffee-script
+
+    UBUNTU-11-10> sudo apt-get install nodejs npm &&
+                  sudo npm install coffee-script
 
 [guard](https://github.com/guard/guard)
 
@@ -98,7 +101,7 @@ Open [http://0.0.0.0:8080/](http://0.0.0.0:8080/) and you should see a nice **He
 
 # Development tasks
 
-Compiling less files:
+Compiling Less and CoffeeScript files:
 
     > guard
 
@@ -109,9 +112,23 @@ Compressing CSS and Javascript:
     > gradle compressCss
     > gradle compressJs
 
+or
+
+    > gradle compressAll
+
 Compiling Less manually:
 
     > gradle compileLess
+
+Compiling CoffeeScript manually:
+
+    > gradle compileCoffeScript
+
+Optional if you have foreman gem install
+
+    > foreman start
+
+This would start _gradle tomcatRun_ and _guard_ in a single terminal
 
 # TODO
 
