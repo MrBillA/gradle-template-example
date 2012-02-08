@@ -10,6 +10,7 @@ gradle -PLOGBACK_APPENDER=FILE -PLOGBACK_LOG_FILE_LOCATION=/srv/logs clean war -
 sed -i 's/git\.sha\=.*/git\.sha\='$2'/g' /srv/config/*.properties
 
 echo -e "\e[0;32m===> Remove previous war\033[0m"
+sudo rm /var/lib/tomcat6/conf/Catalina/localhost/ROOT.xml
 sudo rm -rf /var/lib/tomcat6/webapps/ROOT*
 
 echo -e "\e[0;32m===> Moving new war to the webapps dir\033[0m"
