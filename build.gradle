@@ -4,13 +4,20 @@ buildscript {
       name = "GitHub"
       addArtifactPattern "http://cloud.github.com/downloads/[organisation]/[module]/[module]-[revision].[ext]"
     }
+    maven {
+      name "zt-public-snapshots"
+      url "http://repos.zeroturnaround.com/nexus/content/groups/zt-public/"
+    }
+    mavenCentral()
   }
 
   dependencies {
     classpath "bmuschko:gradle-tomcat-plugin:0.8.2"
+    classpath "org.zeroturnaround:gradle-jrebel-plugin:1.0.2-SNAPSHOT"
   }
 }
 
+apply plugin: "rebel"
 apply plugin: "java"
 apply plugin: "war"
 apply plugin: "tomcat"
@@ -41,22 +48,18 @@ sourceCompatibility = "1.6"
 
 configurations {
   all*.exclude group: "commons-logging"
+  all*.exclude module: "log4j"
   yui
 }
 
 war {
   baseName = projectName
+  dependsOn += ["compressAll"]
 }
 
 tomcatRun {
   contextPath = "/"
-}
-
-task installDepsOSX << {
-  println "\u001b[0;32m===> Installing coffeescript\u001b[m"
-  println "brew install coffee-script".execute().getText()
-  println "\u001b[0;32m===> Installing guard, less, guard-less and guard-coffeescript\u001b[m"
-  println "gem install guard guard-less guard-coffeescript foreman".execute().getText()
+  dependsOn += ["generateRebel"]
 }
 
 task compileLess << {
@@ -105,7 +108,7 @@ task compressJs(dependsOn: [":compileCoffeScript"]) << {
         exclude(name: "*-min.js")
       }
     }
-  }  
+  }
 }
 
 task compressAll(dependsOn: [":compressCss", ":compressJs"])
@@ -188,7 +191,8 @@ dependencies {
   compile "com.googlecode.flyway:flyway-core:1.5"
   // ** SLF4J **
   compile "org.slf4j:slf4j-api:$SLF4J_VERSION"
-  compile "org.slf4j:jcl-over-slf4j:$SLF4J_VERSION"
+  runtime "org.slf4j:jcl-over-slf4j:$SLF4J_VERSION"
+  runtime "org.slf4j:slf4j-log4j12:$SLF4J_VERSION"
   // ** LogBack **
   compile "ch.qos.logback:logback-core:1.0.0"
   compile "ch.qos.logback:logback-classic:1.0.0"
@@ -207,6 +211,9 @@ dependencies {
   compile "javax.validation:validation-api:1.0.0.GA"
   // ** Web Filters **
   compile "net.sf.ehcache:ehcache-web:2.0.4"
+  compile "org.tuckey:urlrewritefilter:3.2.0"
+
+  runtime "janino:janino:2.5.10"
 
   def tomcatVersion = "6.0.35"
   tomcat "org.apache.tomcat:catalina:${tomcatVersion}"

@@ -1,35 +1,47 @@
 <configuration>
-  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>@LOGBACK_LOG_FILE_LOCATION@/changeme.log</file>
+  <if condition='"@LOGBACK_APPENDER@".equals("FILE")'>
+    <then>
+      <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>@LOGBACK_LOG_FILE_LOCATION@/changeme.log</file>
 
-    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-      <fileNamePattern>@LOGBACK_LOG_FILE_LOCATION@/changeme.%i.log.zip</fileNamePattern>
-      <minIndex>1</minIndex>
-      <maxIndex>3</maxIndex>
-    </rollingPolicy>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+          <fileNamePattern>@LOGBACK_LOG_FILE_LOCATION@/changeme.%i.log.zip</fileNamePattern>
+          <minIndex>1</minIndex>
+          <maxIndex>3</maxIndex>
+        </rollingPolicy>
 
-    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-      <maxFileSize>5MB</maxFileSize>
-    </triggeringPolicy>
-    <encoder>
-      <pattern>%-30(%d{HH:mm:ss.SSS} [%thread]) %-5level %logger{36} - %msg%n</pattern>
-    </encoder>
-  </appender>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+          <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+          <pattern>%-30(%d{HH:mm:ss.SSS} [%thread]) %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+      </appender>
+    </then>
+  </if>
 
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>%-30(%d{HH:mm:ss.SSS} [%thread]) %-5level %logger{36} - %msg%n</pattern>
-    </encoder>
-  </appender>
+  <if condition='"@LOGBACK_APPENDER@".equals("STDOUT")'>
+    <then>
+      <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+          <pattern>%-30(%d{HH:mm:ss.SSS} [%thread]) %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+      </appender>
+    </then>
+  </if>
 
-  <appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
-    <syslogHost>@LOGBACK_SYSLOG_HOST@</syslogHost>
-    <port>@LOGBACK_SYSLOG_PORT@</port>
-    <facility>LOCAL3</facility>
-    <suffixPattern>[%thread] %-5level %logger{36} %msg</suffixPattern>
-  </appender>
+  <if condition='"@LOGBACK_APPENDER@".equals("SYSLOG")'>
+    <then>
+      <appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
+        <syslogHost>@LOGBACK_SYSLOG_HOST@</syslogHost>
+        <port>@LOGBACK_SYSLOG_PORT@</port>
+        <facility>LOCAL3</facility>
+        <suffixPattern>[%thread] %-5level %logger{36} %msg</suffixPattern>
+      </appender>
+    </then>
+  </if>
 
-  <root level="info">
+  <root level="ERROR">
     <appender-ref ref="@LOGBACK_APPENDER@"/>
   </root>
 </configuration>

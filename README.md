@@ -130,6 +130,18 @@ Optional if you have foreman gem install
 
 This would start _gradle tomcatRun_ and _guard_ in a single terminal
 
+# JRebel
+
+To use [JRebel](http://zeroturnaround.com/jrebel/)
+
+* Install JRebel [http://zeroturnaround.com/jrebel/current/](http://zeroturnaround.com/jrebel/current/)
+* Set REBEL_HOME to the JRebel install dir (/Applications/ZeroTurnaround/JRebel in OSX)
+* Set GRADLE_OPTS="-javaagent:$REBEL_HOME/jrebel.jar -Drebel.log4j-plugin=false $JAVA_OPTS"
+
+Then simply start tomcat with
+
+    > gradle tomcatRun
+
 # TODO
 
 * Keep checking dependencies versions and update them when necessary.

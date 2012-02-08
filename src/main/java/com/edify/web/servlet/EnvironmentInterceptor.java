@@ -16,7 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 public class EnvironmentInterceptor extends HandlerInterceptorAdapter {
   public static final String DEFAULT_PARAM_NAME = "env";
   public static final String ASSETS_SUFFIX_PARAM_NAME = "assetsSuffix";
-  public static final String ASSETS_CACHE_BUSTER_PARAM_NAME = "cacheBuster";
+
+  //Use for cache busting
   @Value("${git.sha}")
   private String gitSha;
 
@@ -24,14 +25,12 @@ public class EnvironmentInterceptor extends HandlerInterceptorAdapter {
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     WebApplicationContext webApplicationContext = (WebApplicationContext) RequestContextUtils.getWebApplicationContext(request);
     String[] activeProfiles = webApplicationContext.getEnvironment().getActiveProfiles();
-    if(ArrayUtils.contains(activeProfiles, "production")) {
-      request.getSession().setAttribute(DEFAULT_PARAM_NAME, "production");
-      request.getSession().setAttribute(ASSETS_SUFFIX_PARAM_NAME, "-min");
-      request.getSession().setAttribute(ASSETS_SUFFIX_PARAM_NAME, "-min");
-      request.getSession().setAttribute(ASSETS_CACHE_BUSTER_PARAM_NAME, "?v=" + gitSha);
+    if (ArrayUtils.contains(activeProfiles, "production")) {
+      request.setAttribute(DEFAULT_PARAM_NAME, "production");
+      request.setAttribute(ASSETS_SUFFIX_PARAM_NAME, "-min-" + gitSha);
     } else {
+      request.setAttribute(DEFAULT_PARAM_NAME, "development");
       request.getSession().setAttribute(ASSETS_SUFFIX_PARAM_NAME, "");
-      request.getSession().setAttribute(ASSETS_CACHE_BUSTER_PARAM_NAME, "");
     }
     return true;
   }
