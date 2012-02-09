@@ -30,8 +30,13 @@
   </context-param>
 
   <context-param>
+    <param-name>contextClass</param-name>
+    <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+  </context-param>
+
+  <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>classpath*:META-INF/spring/applicationContext*.xml</param-value>
+    <param-value>com.edify.config</param-value>
   </context-param>
 
   <filter>
@@ -119,7 +124,7 @@
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <init-param>
       <param-name>contextConfigLocation</param-name>
-      <param-value>/WEB-INF/spring/webmvc-config.xml</param-value>
+      <param-value></param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

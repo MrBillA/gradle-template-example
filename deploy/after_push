@@ -27,4 +27,3 @@ else
   # All good tag the build
   git tag build-$(date -u +%Y%m%d-%H%M%S%z)
 fi
-set -e
