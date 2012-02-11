@@ -1,16 +1,10 @@
 package com.edify.config;
 
 import com.edify.web.servlet.EnvironmentInterceptor;
-import org.apache.commons.lang.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.context.support.ResourceBundleThemeSource;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
@@ -23,7 +17,6 @@ import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles2.TilesConfigurer;
 
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -32,7 +25,6 @@ import java.util.Properties;
  */
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = "change.me", includeFilters = {@ComponentScan.Filter(type = FilterType.ANNOTATION, value = Controller.class)})
 public class WebConfig extends WebMvcConfigurerAdapter {
   @Value("${assets.CacheSeconds}")
   private int assetsCacheSeconds;
