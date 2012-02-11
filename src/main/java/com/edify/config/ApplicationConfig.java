@@ -1,27 +1,23 @@
 package com.edify.config;
 
-import com.avaje.ebean.EbeanServer;
-import com.avaje.ebean.LogLevel;
-import com.avaje.ebean.config.AutofetchConfig;
-import com.avaje.ebean.config.ServerConfig;
-import com.avaje.ebean.config.UnderscoreNamingConvention;
-import com.avaje.ebean.springsupport.factory.EbeanServerFactoryBean;
-import com.avaje.ebean.springsupport.txn.SpringAwareJdbcTransactionManager;
 import com.googlecode.flyway.core.Flyway;
 import com.jolbox.bonecp.BoneCPDataSource;
 import org.apache.commons.lang.ArrayUtils;
+import org.hibernate.ejb.HibernatePersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Properties;
 
 /**
  * @author jarias
