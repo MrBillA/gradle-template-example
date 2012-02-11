@@ -9,17 +9,21 @@
 
   <definition extends="public" name="dataAccessFailure">
     <put-attribute name="body" value="/WEB-INF/views/dataAccessFailure.jsp"/>
+    <put-attribute name="title" value="Error"/>
   </definition>
 
   <definition extends="public" name="resourceNotFound">
     <put-attribute name="body" value="/WEB-INF/views/resourceNotFound.jsp"/>
+    <put-attribute name="title" value="Error"/>
   </definition>
 
   <definition extends="public" name="uncaughtException">
     <put-attribute name="body" value="/WEB-INF/views/uncaughtException.jsp"/>
+    <put-attribute name="title" value="Error"/>
   </definition>
 
   <definition extends="public" name="login">
     <put-attribute name="body" value="/WEB-INF/views/login.jsp"/>
+    <put-attribute name="title" value="Login"/>
   </definition>
 </tiles-definitions>
