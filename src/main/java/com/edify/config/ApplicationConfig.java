@@ -1,34 +1,34 @@
 package com.edify.config;
 
+import com.avaje.ebean.EbeanServer;
+import com.avaje.ebean.LogLevel;
+import com.avaje.ebean.config.AutofetchConfig;
+import com.avaje.ebean.config.ServerConfig;
+import com.avaje.ebean.config.UnderscoreNamingConvention;
+import com.avaje.ebean.springsupport.factory.EbeanServerFactoryBean;
+import com.avaje.ebean.springsupport.txn.SpringAwareJdbcTransactionManager;
 import com.googlecode.flyway.core.Flyway;
 import com.jolbox.bonecp.BoneCPDataSource;
 import org.apache.commons.lang.ArrayUtils;
-import org.hibernate.ejb.HibernatePersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.Arrays;
 
 /**
  * @author jarias
  * @since 9/2/12 11:25 AM
  */
 @Configuration
-@ComponentScan(basePackages = "change.me", excludeFilters = {@ComponentScan.Filter(type = FilterType.ANNOTATION, value = Controller.class)})
+@ComponentScan(basePackages = "com.edify")
 @ImportResource({"classpath:META-INF/spring/applicationContext-security.xml", "classpath:META-INF/spring/applicationContext.xml"})
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 public class ApplicationConfig {
@@ -47,7 +47,7 @@ public class ApplicationConfig {
   private String emailHost;
 
   @Bean
-  static public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() throws IOException {
+  static public PropertySourcesPlaceholderConfigurer placeholderConfigurer() throws IOException {
     PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
     PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
     Resource[] resourceLocations = (Resource[]) ArrayUtils.addAll(resourcePatternResolver.getResources("classpath*:META-INF/spring/*.properties"),
