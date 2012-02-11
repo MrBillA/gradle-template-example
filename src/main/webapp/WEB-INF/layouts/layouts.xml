@@ -12,8 +12,6 @@
   </definition>
 
   <definition name="public" template="/WEB-INF/layouts/default.jsp">
-    <put-attribute name="header" value="/WEB-INF/views/header.jsp"/>
-    <put-attribute name="footer" value="/WEB-INF/views/footer.jsp"/>
     <put-attribute name="title" value="Change Me"/>
   </definition>
 

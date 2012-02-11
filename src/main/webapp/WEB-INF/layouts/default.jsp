@@ -14,12 +14,19 @@
 </head>
 
 <body>
-<tiles:insertAttribute name="header"/>
+<tiles:insertAttribute name="header" ignore="true"/>
 <div class="container">
-  <tiles:insertAttribute name="body"/>
+  <div class="hero-unit">
+    <c:if test="${not empty message}">
+      <div class="alert-success alert">
+          ${message}
+      </div>
+    </c:if>
+    <tiles:insertAttribute name="body"/>
+  </div>
   <hr>
   <footer>
-    <tiles:insertAttribute name="footer"/>
+    <tiles:insertAttribute name="footer" ignore="true"/>
   </footer>
 </div>
 <!-- /container -->
@@ -27,6 +34,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
 <script src="/js/modernizr-2.0.6-min.js"></script>
 <script src="/js/application${assetsSuffix}.js"></script>
+<script src="/js/ujs${assetsSuffix}.js"></script>
 <!--[if lt IE 7 ]>
 <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
 <script>window.attachEvent('onload', function () {
