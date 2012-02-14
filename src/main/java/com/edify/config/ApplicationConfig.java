@@ -67,6 +67,7 @@ public class ApplicationConfig {
     ds.setAcquireIncrement(5);
     ds.setStatementsCacheSize(100);
     ds.setReleaseHelperThreads(3);
+    ds.setDefaultAutoCommit(false);
     return ds;
   }
 
