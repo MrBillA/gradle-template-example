@@ -14,6 +14,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -78,7 +79,7 @@ public class ApplicationConfig {
 
   @Bean(name = "entityManagerFactory")
   @DependsOn("flyway")
-  public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean() {
+  public EntityManagerFactory entityManagerFactory() {
     LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
     localContainerEntityManagerFactoryBean.setDataSource(dataSource());
     localContainerEntityManagerFactoryBean.setPersistenceProvider(persistenceProvider());
@@ -88,13 +89,14 @@ public class ApplicationConfig {
     jpaProperties.setProperty("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
     jpaProperties.setProperty("hibernate.connection.charSet", "UTF-8");
     localContainerEntityManagerFactoryBean.setJpaProperties(jpaProperties);
-    return localContainerEntityManagerFactoryBean;
+    localContainerEntityManagerFactoryBean.afterPropertiesSet();
+    return localContainerEntityManagerFactoryBean.getObject();
   }
 
   @Bean(name = "transactionManager")
   public JpaTransactionManager transactionManager() {
     JpaTransactionManager transactionManager = new JpaTransactionManager();
-    transactionManager.setEntityManagerFactory(localContainerEntityManagerFactoryBean().getObject());
+    transactionManager.setEntityManagerFactory(entityManagerFactory());
     return transactionManager;
   }
 
