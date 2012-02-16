@@ -10,8 +10,10 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.orm.jpa.JpaDialect;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
@@ -47,7 +49,8 @@ public class ApplicationConfig {
   static public PropertySourcesPlaceholderConfigurer placeholderConfigurer() throws IOException {
     PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
     PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-    Resource[] resourceLocations = (Resource[]) ArrayUtils.addAll(resourcePatternResolver.getResources("classpath*:META-INF/spring/*.properties"),
+    Resource[] resourceLocations = (Resource[]) ArrayUtils.addAll(
+            resourcePatternResolver.getResources("classpath*:META-INF/spring/*.properties"),
             resourcePatternResolver.getResources("file:/srv/config/*.properties"));
     p.setLocations(resourceLocations);
     return p;
@@ -77,6 +80,11 @@ public class ApplicationConfig {
     return new HibernatePersistence();
   }
 
+  @Bean
+  public JpaDialect jpaDialect() {
+    return new HibernateJpaDialect();
+  }
+
   @Bean(name = "entityManagerFactory")
   @DependsOn("flyway")
   public EntityManagerFactory entityManagerFactory() {
@@ -84,6 +92,7 @@ public class ApplicationConfig {
     localContainerEntityManagerFactoryBean.setDataSource(dataSource());
     localContainerEntityManagerFactoryBean.setPersistenceProvider(persistenceProvider());
     localContainerEntityManagerFactoryBean.setPackagesToScan("change.me.model");
+    localContainerEntityManagerFactoryBean.setJpaDialect(jpaDialect());
     Properties jpaProperties = new Properties();
     jpaProperties.setProperty("hibernate.dialect", hibernateDialect);
     jpaProperties.setProperty("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
