@@ -22,10 +22,10 @@ The template includes:
 
 # Versions
 
-* Spring                   3.1.0.RELEASE
+* Spring                   3.1.1.RELEASE
 * Spring Security          3.1.0.RELEASE
-* Hibernate Core           4.0.1.Final
-* Hibernate Entity Manager 4.0.1.Final
+* Hibernate Core           4.1.0.Final
+* Hibernate Entity Manager 4.1.0.Final
 * SLF4J                    1.6.4
 * Logback                  1.0.0
 * Tiles                    2.2.2   

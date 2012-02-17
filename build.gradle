@@ -129,11 +129,11 @@ processResources {
 }
 
 //*** Versions ***
-SPRING_VERSION = "3.1.0.RELEASE"
+SPRING_VERSION = "3.1.1.RELEASE"
 SPRING_SECURITY_VERSION = "3.1.0.RELEASE"
 TILES_VERSION = "2.2.2"
 SLF4J_VERSION = "1.6.4"
-HIBERNATE_VERSION = "4.0.1.Final"
+HIBERNATE_VERSION = "4.1.0.Final"
 
 hibernate = [
         "org.hibernate:hibernate-core:$HIBERNATE_VERSION",
@@ -201,7 +201,6 @@ dependencies {
   compile "org.codehaus.jackson:jackson-mapper-asl:1.9.3"
   compile "cglib:cglib-nodep:2.2.2"
   // ** Database **
-  compile "org.hsqldb:hsqldb:2.2.4"
   compile "mysql:mysql-connector-java:5.1.18"
   // ** Javax **
   compile "javax.mail:mail:1.4.1"
