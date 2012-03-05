@@ -168,6 +168,8 @@ dependencies {
   compile "org.springframework:spring-webmvc:$SPRING_VERSION"
   compile "org.springframework:spring-context-support:$SPRING_VERSION"
   compile "org.springframework:spring-test:$SPRING_VERSION"
+  // ** AspectJ **
+  compile "org.aspectj:aspectjrt:1.6.12"
   // ** Spring Security **
   compile "org.springframework.security:spring-security-core:$SPRING_SECURITY_VERSION"
   compile "org.springframework.security:spring-security-config:$SPRING_SECURITY_VERSION"
