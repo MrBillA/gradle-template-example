@@ -1,7 +1,7 @@
+atlassian-ide-plugin.xml
 *-min.js
 *-min.css
 *.log
-.sass-cache
 .gradle
 build
 .idea

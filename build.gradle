@@ -35,10 +35,6 @@ repositories {
 
 version = "1.0-SNAPSHOT"
 group = "change.me"
-projectName = "changeme"
-
-targetCompatibility = "1.6"
-sourceCompatibility = "1.6"
 
 configurations {
   all*.exclude group: "commons-logging"
@@ -47,7 +43,6 @@ configurations {
 }
 
 war {
-  baseName = projectName
   dependsOn += ["compressAll"]
 }
 
@@ -121,14 +116,7 @@ processResources {
           ])
 }
 
-//*** Versions ***
-SPRING_VERSION = "3.1.1.RELEASE"
-SPRING_SECURITY_VERSION = "3.1.0.RELEASE"
-TILES_VERSION = "2.2.2"
-SLF4J_VERSION = "1.6.4"
-HIBERNATE_VERSION = "4.1.0.Final"
-
-hibernate = [
+ext.hibernate = [
         "org.hibernate:hibernate-core:$HIBERNATE_VERSION",
         "org.hibernate:hibernate-validator:4.2.0.Final",
         "org.hibernate:hibernate-entitymanager:$HIBERNATE_VERSION",
