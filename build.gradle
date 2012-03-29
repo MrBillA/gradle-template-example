@@ -4,20 +4,14 @@ buildscript {
       name = "GitHub"
       addArtifactPattern "http://cloud.github.com/downloads/[organisation]/[module]/[module]-[revision].[ext]"
     }
-    maven {
-      name "zt-public-snapshots"
-      url "http://repos.zeroturnaround.com/nexus/content/groups/zt-public/"
-    }
     mavenCentral()
   }
 
   dependencies {
     classpath "bmuschko:gradle-tomcat-plugin:0.8.2"
-    classpath "org.zeroturnaround:gradle-jrebel-plugin:1.0.2-SNAPSHOT"
   }
 }
 
-apply plugin: "rebel"
 apply plugin: "java"
 apply plugin: "war"
 apply plugin: "tomcat"
@@ -59,7 +53,6 @@ war {
 
 tomcatRun {
   contextPath = "/"
-  dependsOn += ["generateRebel"]
 }
 
 task compileLess << {
