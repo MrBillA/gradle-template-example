@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+source /etc/profile
 set -e
 oldrev=$1
 newrev=$2
