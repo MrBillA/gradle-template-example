@@ -86,14 +86,14 @@ Change the following in build.gradle
     group = 'change.me'
     projectName = 'changeme'
 
-Change the follwing in gradle.properties
+Change the follwing in gradle.properties (optional)
 
     logbackSyslogPort=20159 # To the proper port if you are using loggly or any other syslog server
     logbackSyslogHost=logs.loggly.com # To the proper syslog server if you are using syslog
     
-Change in spring application context XML files
+Change in spring application context AplicationConfig.java files
 
-    change.me # To the proper package name
+    @ComponentScan(basePackages = "com.edify") to the proper package name    
 
 Test the app
 
@@ -131,14 +131,6 @@ Optional if you have foreman gem install
     > foreman start
 
 This would start _gradle tomcatRun_ and _guard_ in a single terminal
-
-# JRebel
-
-To use [JRebel](http://zeroturnaround.com/jrebel/)
-
-* Install JRebel [http://zeroturnaround.com/jrebel/current/](http://zeroturnaround.com/jrebel/current/)
-* Set REBEL_HOME to the JRebel install dir (/Applications/ZeroTurnaround/JRebel in OSX)
-* Set GRADLE_OPTS="-javaagent:$REBEL_HOME/jrebel.jar -Drebel.log4j-plugin=false $JAVA_OPTS"
 
 Then simply start tomcat with
 
