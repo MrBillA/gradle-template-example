@@ -63,9 +63,11 @@ For a full list look at the build.gradle file
 To start a new Java project based on this template simple clone it (yeah is that easy!)
 
     > git clone git@github.com:edify/java-spring-jpa-template.git your_app_name
+    > cd your_app_name
     > rm -rf .git
     > git init
-    > git commit -a "Initial Commit"
+    > git add .
+    > git commit -m "Initial Commit"
 
 Change the following in the web.xml file:
 
