@@ -175,7 +175,7 @@ dependencies {
   // ** SLF4J **
   compile "org.slf4j:slf4j-api:$SLF4J_VERSION"
   runtime "org.slf4j:jcl-over-slf4j:$SLF4J_VERSION"
-  runtime "org.slf4j:slf4j-log4j12:$SLF4J_VERSION"
+  runtime "org.slf4j:log4j-over-slf4j:$SLF4J_VERSION"
   // ** LogBack **
   compile "ch.qos.logback:logback-core:1.0.0"
   compile "ch.qos.logback:logback-classic:1.0.0"
