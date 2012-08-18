@@ -36,7 +36,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/login");
+        //registry.addViewController("/login");
         registry.addViewController("/").setViewName("index");
         registry.addViewController("/uncaughtException");
         registry.addViewController("/resourceNotFound");
@@ -115,17 +115,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return new CommonsMultipartResolver();
     }
 
-    @Bean(name = "tilesViewResolver")
+    @Bean(name = "jstlViewResolver")
     public UrlBasedViewResolver tilesViewResolver() {
         UrlBasedViewResolver viewResolver = new UrlBasedViewResolver();
-        viewResolver.setViewClass(org.springframework.web.servlet.view.tiles2.TilesView.class);
+        viewResolver.setViewClass(org.springframework.web.servlet.view.JstlView.class);
+        viewResolver.setPrefix("/WEB-INF/views/");
+        viewResolver.setSuffix(".jsp");
         return viewResolver;
-    }
-
-    @Bean
-    public TilesConfigurer tilesConfigurer() {
-        TilesConfigurer tilesConfigurer = new TilesConfigurer();
-        tilesConfigurer.setDefinitions(new String[]{"/WEB-INF/layouts/layouts.xml", "/WEB-INF/views/**/views.xml"});
-        return tilesConfigurer;
     }
 }
