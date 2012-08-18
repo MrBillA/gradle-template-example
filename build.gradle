@@ -64,6 +64,89 @@ war {
     dependsOn += ["compressAll"]
 }
 
+task generateChangelog << {
+    println "\u001b[0;32m===> Generating Liquibase Changelog [${outputFile}]\u001b[m"
+    ant {
+        path(id: "classpath") {
+            pathelement(path: configurations.liquibase.asPath)
+        }
+        taskdef(name: "generateChangeLog", classname: "liquibase.integration.ant.GenerateChangeLogTask", classpathref: "classpath")
+        generateChangeLog(outputFile: "$basedir/src/main/resources/db/changelog/${outputFile}",
+                driver: DATABASE_DRIVER_CLASSNAME,
+                url: DATABASE_URL,
+                username: DATABASE_USERNAME,
+                password: DATABASE_PASSWORD,
+                classpathref: "classpath")
+    }
+}
+
+task updateDatabase << {
+    println "\u001b[0;32m===> Migrating database to latest changeset\u001b[m"
+    ant {
+        path(id: "classpath") {
+            pathelement(path: configurations.liquibase.asPath)
+        }
+        taskdef(name: "updateDatabase", classname: "liquibase.integration.ant.DatabaseUpdateTask", classpathref: "classpath")
+        updateDatabase(changeLogFile: "$basedir/src/main/resources/db/changelog/db.changelog-master.xml",
+                driver: DATABASE_DRIVER_CLASSNAME,
+                url: DATABASE_URL,
+                username: DATABASE_USERNAME,
+                password: DATABASE_PASSWORD,
+                promptOnNonLocalDatabase: true,
+                dropFirst: false,
+                classpathref: "classpath")
+    }
+}
+
+task tagDatabase << {
+    println "\u001b[0;32m===> Tag the database for rollback\u001b[m"
+    ant {
+        path(id: "classpath") {
+            pathelement(path: configurations.liquibase.asPath)
+        }
+        taskdef(name: "tagDatabase", classname: "liquibase.integration.ant.TagDatabaseTask", classpathref: "classpath")
+        tagDatabase(driver: DATABASE_DRIVER_CLASSNAME,
+                url: DATABASE_URL,
+                username: DATABASE_USERNAME,
+                password: DATABASE_PASSWORD,
+                classpathref: "classpath",
+                tag: tag)
+    }
+}
+
+task rollbackDatabase << {
+    println "\u001b[0;32m===> Generating dbdoc database documentation\u001b[m"
+    ant {
+        path(id: "classpath") {
+            pathelement(path: configurations.liquibase.asPath)
+        }
+        taskdef(name: "rollbackDatabase", classname: "liquibase.integration.ant.DatabaseRollbackTask", classpathref: "classpath")
+        rollbackDatabase(changeLogFile: "$basedir/src/main/resources/db/changelog/db.changelog-master.xml",
+                driver: DATABASE_DRIVER_CLASSNAME,
+                url: DATABASE_URL,
+                username: DATABASE_USERNAME,
+                password: DATABASE_PASSWORD,
+                classpathref: "classpath",
+                rollbackTag: tag)
+    }
+}
+
+task dbDoc << {
+    println "\u001b[0;32m===> Tag the database for rollback\u001b[m"
+    ant {
+        path(id: "classpath") {
+            pathelement(path: configurations.liquibase.asPath)
+        }
+        taskdef(name: "tagDatabase", classname: "liquibase.integration.ant.DBDocTask", classpathref: "classpath")
+        dbDoc(driver: DATABASE_DRIVER_CLASSNAME,
+                url: DATABASE_URL,
+                username: DATABASE_USERNAME,
+                password: DATABASE_PASSWORD,
+                classpathref: "classpath",
+                outputDirectory: "$buildDir/dbdoc")
+    }
+}
+
 task compileLess << {
     //Compile all less files
     println "\u001b[0;32m===> Compiling Less files\u001b[m"
@@ -201,4 +284,5 @@ dependencies {
     yui "com.yahoo.platform.yui:yuicompressor:2.4.6"
     yui "noha:yui-compressor-ant-task:0.5.1"
     liquibase "org.liquibase:liquibase-core:2.0.5"
+    liquibase "postgresql:postgresql:9.1-901.jdbc4"
 }
