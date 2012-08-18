@@ -62,9 +62,16 @@ public class ApplicationConfig {
     @Value("${datasource.bonecp.ReleaseHelperThreads}")
     private Integer releaseHelperThreads;
 
-
-    @Value("${email.host}")
-    private String emailHost;
+    @Value("${mail.smtp.host}")
+    private String mailSMTPHost;
+    @Value("${mail.smtp.port}")
+    private Integer mailSMTPPort;
+    @Value("${mail.smtp.auth}")
+    private Boolean mailSMTPAuth;
+    @Value("${mail.smtp.username}")
+    private String mailSMTPUsername;
+    @Value("${mail.smtp.password}")
+    private String mailSMTPPassword;
 
     @Bean
     static public PropertySourcesPlaceholderConfigurer placeholderConfigurer() throws IOException {
@@ -138,8 +145,18 @@ public class ApplicationConfig {
 
     @Bean(name = "mailSender")
     public JavaMailSenderImpl mailSender() {
+        Properties javaMailProperties = new Properties();
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(emailHost);
+        mailSender.setHost(mailSMTPHost);
+        mailSender.setPort(mailSMTPPort);
+        if (mailSMTPAuth) {
+            mailSender.setUsername(mailSMTPUsername);
+            mailSender.setPassword(mailSMTPPassword);
+            javaMailProperties.setProperty("mail.smtp.auth", "true");
+        } else {
+            javaMailProperties.setProperty("mail.smtp.auth", "false");
+        }
+        mailSender.setJavaMailProperties(javaMailProperties);
         return mailSender;
     }
 
