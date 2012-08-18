@@ -1,5 +1,7 @@
-<div class="hero-unit hello">
-  <h1>Hello world</h1>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-  <p>Start coding now!!</p>
+<div class="hero-unit hello">
+    <h1><spring:message code="hello"/></h1>
+
+    <p><spring:message code="start"/></p>
 </div>
