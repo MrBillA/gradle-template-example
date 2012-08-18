@@ -2,7 +2,6 @@ package com.edify.config;
 
 import com.googlecode.flyway.core.Flyway;
 import com.jolbox.bonecp.BoneCPDataSource;
-import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.ejb.HibernatePersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -20,6 +19,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -31,95 +33,137 @@ import java.util.Properties;
 @ImportResource({"classpath:META-INF/spring/applicationContext-security.xml", "classpath:META-INF/spring/applicationContext.xml"})
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 public class ApplicationConfig {
-  @Value("${database.url}")
-  private String databaseUrl;
-  @Value("${database.driver.classname}")
-  private String databaseDriverClassname;
-  @Value("${database.username}")
-  private String databaseUsername;
-  @Value("${database.password}")
-  private String databasePassword;
-  @Value("${hibernate.dialect}")
-  private String hibernateDialect;
+    @Value("${database.url}")
+    private String databaseUrl;
+    @Value("${database.driver.classname}")
+    private String databaseDriverClassname;
+    @Value("${database.username}")
+    private String databaseUsername;
+    @Value("${database.password}")
+    private String databasePassword;
+    @Value("${hibernate.dialect}")
+    private String hibernateDialect;
 
-  @Value("${email.host}")
-  private String emailHost;
+    //DataSource properties
+    @Value("${datasource.bonecp.IdleConnectionTestPeriodInMinutes}")
+    private Integer idleConnectionTestPeriodInMinutes;
+    @Value("${datasource.bonecp.IdleMaxAgeInMinutes}")
+    private Integer idleMaxAgeInMinutes;
+    @Value("${datasource.bonecp.MaxConnectionsPerPartition}")
+    private Integer maxConnectionsPerPartition;
+    @Value("${datasource.bonecp.MinConnectionsPerPartition}")
+    private Integer minConnectionsPerPartition;
+    @Value("${datasource.bonecp.PartitionCount}")
+    private Integer partitionCount;
+    @Value("${datasource.bonecp.AcquireIncrement}")
+    private Integer acquireIncrement;
+    @Value("${datasource.bonecp.StatementsCacheSize}")
+    private Integer statementsCacheSize;
+    @Value("${datasource.bonecp.ReleaseHelperThreads}")
+    private Integer releaseHelperThreads;
 
-  @Bean
-  static public PropertySourcesPlaceholderConfigurer placeholderConfigurer() throws IOException {
-    PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
-    PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-    Resource[] resourceLocations = (Resource[]) ArrayUtils.addAll(
-            resourcePatternResolver.getResources("classpath*:META-INF/spring/*.properties"),
-            resourcePatternResolver.getResources("file:/srv/config/*.properties"));
-    p.setLocations(resourceLocations);
-    return p;
-  }
+    @Value("${mail.smtp.host}")
+    private String mailSMTPHost;
+    @Value("${mail.smtp.port}")
+    private Integer mailSMTPPort;
+    @Value("${mail.smtp.auth}")
+    private Boolean mailSMTPAuth;
+    @Value("${mail.smtp.username}")
+    private String mailSMTPUsername;
+    @Value("${mail.smtp.password}")
+    private String mailSMTPPassword;
 
-  @Bean
-  public DataSource dataSource() {
-    BoneCPDataSource ds = new BoneCPDataSource();
-    ds.setDriverClass(databaseDriverClassname);
-    ds.setJdbcUrl(databaseUrl);
-    ds.setUsername(databaseUsername);
-    ds.setPassword(databasePassword);
-    ds.setIdleConnectionTestPeriodInMinutes(60);
-    ds.setIdleMaxAgeInMinutes(240);
-    ds.setMaxConnectionsPerPartition(20);
-    ds.setMinConnectionsPerPartition(10);
-    ds.setPartitionCount(2);
-    ds.setAcquireIncrement(5);
-    ds.setStatementsCacheSize(100);
-    ds.setReleaseHelperThreads(3);
-    ds.setDefaultAutoCommit(false);
-    return ds;
-  }
+    @Bean
+    static public PropertySourcesPlaceholderConfigurer placeholderConfigurer() throws IOException {
+        PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
+        PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
-  @Bean
-  public PersistenceProvider persistenceProvider() {
-    return new HibernatePersistence();
-  }
+        List<Resource> resourceLocations = new ArrayList<Resource>();
+        //Read from class path properties first
+        resourceLocations.addAll(Arrays.asList(resourcePatternResolver.getResources("classpath*:META-INF/spring/*.properties")));
+        //Read from a file location (user for servers)
+        resourceLocations.addAll(Arrays.asList(resourcePatternResolver.getResources("file:/srv/config/*.properties")));
+        //This resource allows developers to override any app property for their development environment
+        resourceLocations.add(resourcePatternResolver.getResource(String.format("file:%s/.gradle/changeme.properties", System.getProperty("user.home"))));
 
-  @Bean
-  public JpaDialect jpaDialect() {
-    return new HibernateJpaDialect();
-  }
+        p.setLocations((Resource[]) resourceLocations.toArray());
+        return p;
+    }
 
-  @Bean(name = "entityManagerFactory")
-  @DependsOn("flyway")
-  public EntityManagerFactory entityManagerFactory() {
-    LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-    localContainerEntityManagerFactoryBean.setDataSource(dataSource());
-    localContainerEntityManagerFactoryBean.setPersistenceProvider(persistenceProvider());
-    localContainerEntityManagerFactoryBean.setPackagesToScan("change.me.model");
-    localContainerEntityManagerFactoryBean.setJpaDialect(jpaDialect());
-    Properties jpaProperties = new Properties();
-    jpaProperties.setProperty("hibernate.dialect", hibernateDialect);
-    jpaProperties.setProperty("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
-    jpaProperties.setProperty("hibernate.connection.charSet", "UTF-8");
-    localContainerEntityManagerFactoryBean.setJpaProperties(jpaProperties);
-    localContainerEntityManagerFactoryBean.afterPropertiesSet();
-    return localContainerEntityManagerFactoryBean.getObject();
-  }
+    @Bean
+    public DataSource dataSource() {
+        BoneCPDataSource ds = new BoneCPDataSource();
+        ds.setDriverClass(databaseDriverClassname);
+        ds.setJdbcUrl(databaseUrl);
+        ds.setUsername(databaseUsername);
+        ds.setPassword(databasePassword);
+        ds.setIdleConnectionTestPeriodInMinutes(idleConnectionTestPeriodInMinutes);
+        ds.setIdleMaxAgeInMinutes(idleMaxAgeInMinutes);
+        ds.setMaxConnectionsPerPartition(maxConnectionsPerPartition);
+        ds.setMinConnectionsPerPartition(minConnectionsPerPartition);
+        ds.setPartitionCount(partitionCount);
+        ds.setAcquireIncrement(acquireIncrement);
+        ds.setStatementsCacheSize(statementsCacheSize);
+        ds.setReleaseHelperThreads(releaseHelperThreads);
+        ds.setDefaultAutoCommit(false);
+        return ds;
+    }
 
-  @Bean(name = "transactionManager")
-  public JpaTransactionManager transactionManager() {
-    JpaTransactionManager transactionManager = new JpaTransactionManager();
-    transactionManager.setEntityManagerFactory(entityManagerFactory());
-    return transactionManager;
-  }
+    @Bean
+    public PersistenceProvider persistenceProvider() {
+        return new HibernatePersistence();
+    }
 
-  @Bean(name = "mailSender")
-  public JavaMailSenderImpl mailSender() {
-    JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-    mailSender.setHost(emailHost);
-    return mailSender;
-  }
+    @Bean
+    public JpaDialect jpaDialect() {
+        return new HibernateJpaDialect();
+    }
 
-  @Bean(name = "flyway", initMethod = "migrate")
-  public Flyway flyway() {
-    Flyway flyway = new Flyway();
-    flyway.setDataSource(dataSource());
-    return flyway;
-  }
+    @Bean(name = "entityManagerFactory")
+    @DependsOn("flyway")
+    public EntityManagerFactory entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+        localContainerEntityManagerFactoryBean.setDataSource(dataSource());
+        localContainerEntityManagerFactoryBean.setPersistenceProvider(persistenceProvider());
+        localContainerEntityManagerFactoryBean.setPackagesToScan("change.me.model");
+        localContainerEntityManagerFactoryBean.setJpaDialect(jpaDialect());
+        Properties jpaProperties = new Properties();
+        jpaProperties.setProperty("hibernate.dialect", hibernateDialect);
+        jpaProperties.setProperty("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
+        jpaProperties.setProperty("hibernate.connection.charSet", "UTF-8");
+        localContainerEntityManagerFactoryBean.setJpaProperties(jpaProperties);
+        localContainerEntityManagerFactoryBean.afterPropertiesSet();
+        return localContainerEntityManagerFactoryBean.getObject();
+    }
+
+    @Bean(name = "transactionManager")
+    public JpaTransactionManager transactionManager() {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory());
+        return transactionManager;
+    }
+
+    @Bean(name = "mailSender")
+    public JavaMailSenderImpl mailSender() {
+        Properties javaMailProperties = new Properties();
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(mailSMTPHost);
+        mailSender.setPort(mailSMTPPort);
+        if (mailSMTPAuth) {
+            mailSender.setUsername(mailSMTPUsername);
+            mailSender.setPassword(mailSMTPPassword);
+            javaMailProperties.setProperty("mail.smtp.auth", "true");
+        } else {
+            javaMailProperties.setProperty("mail.smtp.auth", "false");
+        }
+        mailSender.setJavaMailProperties(javaMailProperties);
+        return mailSender;
+    }
+
+    @Bean(name = "flyway", initMethod = "migrate")
+    public Flyway flyway() {
+        Flyway flyway = new Flyway();
+        flyway.setDataSource(dataSource());
+        return flyway;
+    }
 }
