@@ -122,7 +122,6 @@ public class ApplicationConfig {
     }
 
     @Bean(name = "entityManagerFactory")
-    @DependsOn("flyway")
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource());
@@ -160,12 +159,5 @@ public class ApplicationConfig {
         }
         mailSender.setJavaMailProperties(javaMailProperties);
         return mailSender;
-    }
-
-    @Bean(name = "flyway", initMethod = "migrate")
-    public Flyway flyway() {
-        Flyway flyway = new Flyway();
-        flyway.setDataSource(dataSource());
-        return flyway;
     }
 }

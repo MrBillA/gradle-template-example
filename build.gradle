@@ -53,6 +53,7 @@ configurations {
     all*.exclude group: "commons-logging"
     all*.exclude module: "log4j"
     yui
+    liquibase
 }
 
 task wrapper(type: Wrapper) {
@@ -168,8 +169,6 @@ dependencies {
     compile "commons-codec:commons-codec:1.6"
     // ** BoneCP **
     compile "com.jolbox:bonecp:0.7.1.RELEASE"
-    // ** FlyWay **
-    compile "com.googlecode.flyway:flyway-core:1.7"
     // ** SLF4J **
     compile "org.slf4j:slf4j-api:$SLF4J_VERSION"
     runtime "org.slf4j:jcl-over-slf4j:$SLF4J_VERSION"
@@ -201,4 +200,5 @@ dependencies {
     tomcat "org.apache.tomcat:jasper:${tomcatVersion}"
     yui "com.yahoo.platform.yui:yuicompressor:2.4.6"
     yui "noha:yui-compressor-ant-task:0.5.1"
+    liquibase "org.liquibase:liquibase-core:2.0.5"
 }
