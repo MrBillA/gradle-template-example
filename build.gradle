@@ -9,8 +9,11 @@ buildscript {
 
   dependencies {
     classpath "bmuschko:gradle-tomcat-plugin:0.8.2"
+    classpath "org.lesscss:lesscss:1.3.0"
   }
 }
+
+import org.lesscss.LessCompiler
 
 apply plugin: "java"
 apply plugin: "war"
@@ -55,26 +58,19 @@ war {
   dependsOn += ["compressAll"]
 }
 
-tomcatRun {
-  contextPath = "/"
-}
-
 task compileLess << {
   //Compile all less files
   println "\u001b[0;32m===> Compiling Less files\u001b[m"
-  workingDir = "src/main/webapp/WEB-INF/less"
-  ["application.less"].each {
-    filename = ((new File(it)).name =~ /^(.+)\.less/)[0][1]
-    out = new File("src/main/webapp/css/${filename}.css")
-    out.write("lessc $it".execute([], new File(workingDir)).getText())
-  }
-  //Compile bootstrap
-  workingDir += "/bootstrap"
-  out = new File("src/main/webapp/css/bootstrap.css")
-  out.write("lessc bootstrap.less".execute([], new File(workingDir)).getText())
+
+  LessCompiler lessCompiler = new LessCompiler()
+  lessCompiler.compress = true
+  lessCompiler.compile(
+    new File("src/main/webapp/WEB-INF/less/application.less"),
+    new File("src/main/webapp/css/application.css")
+  )
 }
 
-task compressCss(dependsOn: [":compileLess"]) << {
+task compressAll(dependsOn: [":compileLess"]) << {
   println "\u001b[0;32m===> Compressing CSS\u001b[m"
   ant {
     taskdef(name: "yuicompressor",
@@ -85,15 +81,6 @@ task compressCss(dependsOn: [":compileLess"]) << {
       exclude(name: "*-min.css")
     }
   }
-}
-
-task compileCoffeScript << {
-  println "\u001b[0;32m===> Compiling CoffeScript\u001b[m"
-  workingDir = "src/main/webapp/WEB-INF/coffeescript"
-  println "coffee --compile --output src/main/webapp/js $workingDir".execute().getText()
-}
-
-task compressJs(dependsOn: [":compileCoffeScript"]) << {
   println "\u001b[0;32m===> Compressing Javascript\u001b[m"
   ant {
     taskdef(name: "yuicompressor",
@@ -107,8 +94,6 @@ task compressJs(dependsOn: [":compileCoffeScript"]) << {
     }
   }
 }
-
-task compressAll(dependsOn: [":compressCss", ":compressJs"])
 
 processResources {
   filter(org.apache.tools.ant.filters.ReplaceTokens,
@@ -125,7 +110,7 @@ processResources {
           ])
 }
 
-ext.hibernate = [
+def hibernate = [
         "org.hibernate:hibernate-core:$HIBERNATE_VERSION",
         "org.hibernate:hibernate-validator:4.3.0.Final",
         "org.hibernate:hibernate-entitymanager:$HIBERNATE_VERSION",
