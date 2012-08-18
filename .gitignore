@@ -1,6 +1,4 @@
 atlassian-ide-plugin.xml
-*-min.js
-*-min.css
 *.log
 .gradle
 build

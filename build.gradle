@@ -76,9 +76,9 @@ task compressAll(dependsOn: [":compileLess"]) << {
     taskdef(name: "yuicompressor",
             classname: "net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask",
             classpath: configurations.yui.asPath)
-    yuicompressor(jsSuffix: "-min.js", cssSuffix: "-min.css", fromDir: "src/main/webapp/css", toDir: "src/main/webapp/css", warn: false) {
+    yuicompressor(jsSuffix: ".min.js", cssSuffix: ".min.css", fromDir: "src/main/webapp/css", toDir: "src/main/webapp/css", warn: false) {
       include(name: "*.css")
-      exclude(name: "*-min.css")
+      exclude(name: "*.min.css")
     }
   }
   println "\u001b[0;32m===> Compressing Javascript\u001b[m"
@@ -87,9 +87,9 @@ task compressAll(dependsOn: [":compileLess"]) << {
             classname: "net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask",
             classpath: configurations.yui.asPath)
     ["src/main/webapp/js"].each {
-      yuicompressor(jsSuffix: "-min.js", cssSuffix: "-min.css", fromDir: it, toDir: it, warn: false) {
+      yuicompressor(jsSuffix: ".min.js", cssSuffix: ".min.css", fromDir: it, toDir: it, warn: false) {
         include(name: "*.js")
-        exclude(name: "*-min.js")
+        exclude(name: "*.min.js")
       }
     }
   }

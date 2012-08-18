@@ -7,12 +7,12 @@
 <urlrewrite>
 
   <rule>
-    <from>^/css/(.+-min)-.+.css$</from>
+    <from>^/css/(.+.min)-.+.css$</from>
     <to>/css/$1.css</to>
   </rule>
 
   <rule>
-    <from>^/js/(.+-min)-.+.js$</from>
+    <from>^/js/(.+.min)-.+.js$</from>
     <to>/js/$1.js</to>
   </rule>
 
