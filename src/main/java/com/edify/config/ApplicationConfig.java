@@ -77,7 +77,7 @@ public class ApplicationConfig {
     static public PropertySourcesPlaceholderConfigurer placeholderConfigurer() throws IOException {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
         PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-
+        p.setIgnoreResourceNotFound(true);
         List<Resource> resourceLocations = new ArrayList<Resource>();
         //Read from class path properties first
         resourceLocations.addAll(Arrays.asList(resourcePatternResolver.getResources("classpath*:META-INF/spring/*.properties")));
@@ -85,8 +85,8 @@ public class ApplicationConfig {
         resourceLocations.addAll(Arrays.asList(resourcePatternResolver.getResources("file:/srv/config/*.properties")));
         //This resource allows developers to override any app property for their development environment
         resourceLocations.add(resourcePatternResolver.getResource(String.format("file:%s/.gradle/changeme.properties", System.getProperty("user.home"))));
-
-        p.setLocations((Resource[]) resourceLocations.toArray());
+        Resource[] resources = new Resource[resourceLocations.size()];
+        p.setLocations(resourceLocations.toArray(resources));
         return p;
     }
 
