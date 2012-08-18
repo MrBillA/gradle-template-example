@@ -7,8 +7,8 @@
   <meta hidden="${env}">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-  <link href="/css/normalize${assetsSuffix}.css" rel="stylesheet" type="text/css">
-  <link href="/css/bootstrap${assetsSuffix}.css" rel="stylesheet" type="text/css">
+  <link href="/css/normalize.min.css" rel="stylesheet" type="text/css">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="/css/application${assetsSuffix}.css" rel="stylesheet" type="text/css">
   <title><tiles:getAsString name="title"/></title>
 </head>
@@ -32,7 +32,7 @@
 <!-- /container -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
-<script src="/js/modernizr-2.0.6-min.js"></script>
+<script src="/js/modernizr-2.0.6.min.js"></script>
 <script src="/js/application${assetsSuffix}.js"></script>
 <script src="/js/ujs${assetsSuffix}.js"></script>
 <!--[if lt IE 7 ]>
