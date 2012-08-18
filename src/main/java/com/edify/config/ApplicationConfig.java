@@ -29,8 +29,10 @@ import java.util.Properties;
  * @since 9/2/12 11:25 AM
  */
 @Configuration
-@ComponentScan(basePackages = "com.edify")
-@ImportResource({"classpath:META-INF/spring/applicationContext-security.xml", "classpath:META-INF/spring/applicationContext.xml"})
+@ComponentScan(basePackages = "com.edify",
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Configuration.class))
+@ImportResource({"classpath:META-INF/spring/applicationContext-security.xml",
+        "classpath:META-INF/spring/applicationContext-repositories.xml"})
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 public class ApplicationConfig {
     @Value("${database.url}")

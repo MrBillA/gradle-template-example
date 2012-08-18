@@ -36,7 +36,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>com.edify.config</param-value>
+        <param-value>com.edify.config.ApplicationConfig, com.edify.config.WebConfig</param-value>
     </context-param>
 
     <filter>
