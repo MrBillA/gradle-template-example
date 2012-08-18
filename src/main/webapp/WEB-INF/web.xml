@@ -3,169 +3,179 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-  <display-name>edify-java-spring-jpa-template</display-name>
-  <description>Edify Java Spring JPA WebApp Template</description>
+    <display-name>edify-java-spring-jpa-template</display-name>
+    <description>Edify Java Spring JPA WebApp Template</description>
 
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>SecureConnection</web-resource-name>
-      <url-pattern>/*</url-pattern>
-    </web-resource-collection>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>SecureConnection</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
 
-    <!-- Values CONFIDENTIAL (forces SSL), NONE, INTEGRAL -->
-    <user-data-constraint>
-      <transport-guarantee>NONE</transport-guarantee>
-    </user-data-constraint>
-  </security-constraint>
+        <!-- Values CONFIDENTIAL (forces SSL), NONE, INTEGRAL -->
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
 
-  <!-- Enable escaping of form submission contents -->
-  <context-param>
-    <param-name>defaultHtmlEscape</param-name>
-    <param-value>true</param-value>
-  </context-param>
+    <!-- Enable escaping of form submission contents -->
+    <context-param>
+        <param-name>defaultHtmlEscape</param-name>
+        <param-value>true</param-value>
+    </context-param>
 
-  <context-param>
-    <param-name>webAppRootKey</param-name>
-    <param-value>changeme.root</param-value>
-  </context-param>
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>changeme.root</param-value>
+    </context-param>
 
-  <context-param>
-    <param-name>contextClass</param-name>
-    <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
-  </context-param>
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+    </context-param>
 
-  <context-param>
-    <param-name>contextConfigLocation</param-name>
-    <param-value>com.edify.config</param-value>
-  </context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>com.edify.config</param-value>
+    </context-param>
 
-  <filter>
-    <filter-name>Gzip</filter-name>
-    <filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
-  </filter>
+    <filter>
+        <filter-name>Gzip</filter-name>
+        <filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
+    </filter>
 
-  <filter>
-    <filter-name>UrlRewriteFilter</filter-name>
-    <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-    <init-param>
-      <param-name>statusEnabled</param-name>
-      <param-value>false</param-value>
-    </init-param>
-  </filter>
+    <filter>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+        <init-param>
+            <param-name>statusEnabled</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </filter>
 
-  <filter>
-    <filter-name>CharacterEncodingFilter</filter-name>
-    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-    <init-param>
-      <param-name>encoding</param-name>
-      <param-value>UTF-8</param-value>
-    </init-param>
-    <init-param>
-      <param-name>forceEncoding</param-name>
-      <param-value>true</param-value>
-    </init-param>
-  </filter>
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
 
-  <filter>
-    <filter-name>HttpMethodFilter</filter-name>
-    <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
-  </filter>
+    <filter>
+        <filter-name>HttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+    </filter>
 
-  <filter>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-  </filter>
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
 
-  <filter>
-    <filter-name>Spring OpenEntityManagerInViewFilter</filter-name>
-    <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
-  </filter>
+    <filter>
+        <filter-name>Spring OpenEntityManagerInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+    </filter>
 
-  <filter-mapping>
-    <filter-name>Gzip</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter>
+        <filter-name>sitemesh</filter-name>
+        <filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
+    </filter>
 
-  <filter-mapping>
-    <filter-name>UrlRewriteFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-    <dispatcher>FORWARD</dispatcher>
-  </filter-mapping>
+    <filter-mapping>
+        <filter-name>Gzip</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-  <filter-mapping>
-    <filter-name>CharacterEncodingFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter-mapping>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
 
-  <filter-mapping>
-    <filter-name>HttpMethodFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter-mapping>
+        <filter-name>HttpMethodFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-  <filter-mapping>
-    <filter-name>Spring OpenEntityManagerInViewFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-  <!-- Creates the Spring Container shared by all Servlets and Filters -->
-  <listener>
-    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-  </listener>
+    <filter-mapping>
+        <filter-name>Spring OpenEntityManagerInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-  <!-- Handles Spring requests -->
-  <servlet>
-    <servlet-name>spring</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-    <init-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value></param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
+    <filter-mapping>
+        <filter-name>sitemesh</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-  <servlet-mapping>
-    <servlet-name>spring</servlet-name>
-    <url-pattern>/</url-pattern>
-  </servlet-mapping>
+    <!-- Creates the Spring Container shared by all Servlets and Filters -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 
-  <session-config>
-    <session-timeout>30</session-timeout>
-  </session-config>
+    <!-- Handles Spring requests -->
+    <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value></param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
-  <error-page>
-    <exception-type>java.lang.Exception</exception-type>
-    <location>/uncaughtException</location>
-  </error-page>
+    <servlet-mapping>
+        <servlet-name>spring</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 
-  <error-page>
-    <error-code>404</error-code>
-    <location>/resourceNotFound</location>
-  </error-page>
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
 
-  <mime-mapping>
-    <extension>css</extension>
-    <mime-type>text/css</mime-type>
-  </mime-mapping>
-  <mime-mapping>
-    <extension>js</extension>
-    <mime-type>application/x-javascript</mime-type>
-  </mime-mapping>
-  <mime-mapping>
-    <extension>jpg</extension>
-    <mime-type>image/jpeg</mime-type>
-  </mime-mapping>
-  <mime-mapping>
-    <extension>png</extension>
-    <mime-type>image/png</mime-type>
-  </mime-mapping>
-  <mime-mapping>
-    <extension>gif</extension>
-    <mime-type>image/gif</mime-type>
-  </mime-mapping>
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/uncaughtException</location>
+    </error-page>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/resourceNotFound</location>
+    </error-page>
+
+    <mime-mapping>
+        <extension>css</extension>
+        <mime-type>text/css</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>js</extension>
+        <mime-type>application/x-javascript</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>jpg</extension>
+        <mime-type>image/jpeg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>png</extension>
+        <mime-type>image/png</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>gif</extension>
+        <mime-type>image/gif</mime-type>
+    </mime-mapping>
 </web-app>

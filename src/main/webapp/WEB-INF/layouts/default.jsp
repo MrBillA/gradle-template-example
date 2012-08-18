@@ -1,4 +1,4 @@
-<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
+<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="r" tagdir="/WEB-INF/tags" %>
 
@@ -12,23 +12,27 @@
     <r:resource url="css/normalize.min" type="css" minify="false"/>
     <r:resource url="css/bootstrap.min" type="css" minify="false"/>
     <r:resource url="css/application" type="css" minify="true"/>
-    <title><tiles:getAsString name="title"/></title>
+    <title>My Site - <decorator:title default="Welcome!"/></title>
+    <decorator:head/>
 </head>
 
 <body>
-<tiles:insertAttribute name="header" ignore="true"/>
+<jsp:include page="../views/header.jsp"/>
+
 <div class="container">
-    <div class="hero-unit">
+    <div class="row">
         <c:if test="${not empty message}">
             <div class="alert-success alert">
                     ${message}
             </div>
         </c:if>
-        <tiles:insertAttribute name="body"/>
+    </div>
+    <div class="row">
+        <decorator:body/>
     </div>
     <hr>
     <footer>
-        <tiles:insertAttribute name="footer" ignore="true"/>
+        <jsp:include page="../views/footer.jsp"/>
     </footer>
 </div>
 <!-- /container -->
