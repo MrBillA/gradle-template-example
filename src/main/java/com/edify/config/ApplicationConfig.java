@@ -1,6 +1,5 @@
 package com.edify.config;
 
-import com.googlecode.flyway.core.Flyway;
 import com.jolbox.bonecp.BoneCPDataSource;
 import org.hibernate.ejb.HibernatePersistence;
 import org.springframework.beans.factory.annotation.Value;
@@ -126,7 +125,7 @@ public class ApplicationConfig {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource());
         localContainerEntityManagerFactoryBean.setPersistenceProvider(persistenceProvider());
-        localContainerEntityManagerFactoryBean.setPackagesToScan("change.me.model");
+        localContainerEntityManagerFactoryBean.setPackagesToScan("com.edify.model");
         localContainerEntityManagerFactoryBean.setJpaDialect(jpaDialect());
         Properties jpaProperties = new Properties();
         jpaProperties.setProperty("hibernate.dialect", hibernateDialect);

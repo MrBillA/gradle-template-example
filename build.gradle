@@ -34,6 +34,9 @@ repositories {
     maven {
         url "http://repo.springsource.org/milestone"
     }
+    maven {
+        url "http://artifactory.edify.cr/artifactory/repo"
+    }
     mavenCentral()
 }
 
@@ -115,7 +118,7 @@ task tagDatabase << {
 }
 
 task rollbackDatabase << {
-    println "\u001b[0;32m===> Generating dbdoc database documentation\u001b[m"
+    println "\u001b[0;32m===> Rollback database to tag [$tag]\u001b[m"
     ant {
         path(id: "classpath") {
             pathelement(path: configurations.liquibase.asPath)
@@ -132,13 +135,14 @@ task rollbackDatabase << {
 }
 
 task dbDoc << {
-    println "\u001b[0;32m===> Tag the database for rollback\u001b[m"
+    println "\u001b[0;32m===> Generating dbdoc database documentation\u001b[m"
     ant {
         path(id: "classpath") {
             pathelement(path: configurations.liquibase.asPath)
         }
-        taskdef(name: "tagDatabase", classname: "liquibase.integration.ant.DBDocTask", classpathref: "classpath")
-        dbDoc(driver: DATABASE_DRIVER_CLASSNAME,
+        taskdef(name: "dbDoc", classname: "liquibase.integration.ant.DBDocTask", classpathref: "classpath")
+        dbDoc(changeLogFile: "$basedir/src/main/resources/db/changelog/db.changelog-master.xml",
+                driver: DATABASE_DRIVER_CLASSNAME,
                 url: DATABASE_URL,
                 username: DATABASE_USERNAME,
                 password: DATABASE_PASSWORD,
@@ -285,4 +289,5 @@ dependencies {
     yui "noha:yui-compressor-ant-task:0.5.1"
     liquibase "org.liquibase:liquibase-core:2.0.5"
     liquibase "postgresql:postgresql:9.1-901.jdbc4"
+    liquibase "org.hibernate:hibernate-core:$HIBERNATE_VERSION"
 }
