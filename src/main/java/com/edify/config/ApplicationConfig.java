@@ -131,6 +131,7 @@ public class ApplicationConfig {
         jpaProperties.setProperty("hibernate.dialect", hibernateDialect);
         jpaProperties.setProperty("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
         jpaProperties.setProperty("hibernate.connection.charSet", "UTF-8");
+        jpaProperties.setProperty("hibernate.hbm2ddl.auto", "validate");
         localContainerEntityManagerFactoryBean.setJpaProperties(jpaProperties);
         localContainerEntityManagerFactoryBean.afterPropertiesSet();
         return localContainerEntityManagerFactoryBean.getObject();
