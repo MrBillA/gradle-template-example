@@ -14,6 +14,11 @@ buildscript {
 }
 
 import org.lesscss.LessCompiler
+import groovy.xml.StreamingMarkupBuilder
+import javax.xml.transform.stream.StreamResult
+import javax.xml.transform.stream.StreamSource
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.TransformerFactory
 
 apply plugin: "java"
 apply plugin: "war"
@@ -81,6 +86,22 @@ task generateChangelog << {
                 password: DATABASE_PASSWORD,
                 classpathref: "classpath")
     }
+    def masterChangelogFile = new File("src/main/resources/db/changelog/db.changelog-master.xml")
+    def root = new XmlSlurper(false, false).parse(masterChangelogFile)
+    root.appendNode {
+        include(file: outputFile, relativeToChangelogFile: "true")
+    }
+
+    String xml = (new StreamingMarkupBuilder()).bind{ mkp.yield root }
+    //Pretty print since StreamingMarkupBuilder doesn't support it
+    def factory = TransformerFactory.newInstance()
+    factory.setAttribute("indent-number", 4);
+    javax.xml.transform.Transformer transformer = factory.newTransformer()
+    transformer.setOutputProperty(OutputKeys.INDENT, 'yes')
+    StreamResult result = new StreamResult(new StringWriter())
+    transformer.transform(new StreamSource(new ByteArrayInputStream(xml.bytes)), result)
+    //Write the new XML back to the master changelog file
+    masterChangelogFile.write result.writer.toString()
 }
 
 task updateDatabase << {
