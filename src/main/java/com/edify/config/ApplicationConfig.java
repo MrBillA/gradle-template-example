@@ -1,6 +1,7 @@
 package com.edify.config;
 
 import com.jolbox.bonecp.BoneCPDataSource;
+import liquibase.integration.spring.SpringLiquibase;
 import org.hibernate.ejb.HibernatePersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -121,6 +122,7 @@ public class ApplicationConfig {
     }
 
     @Bean(name = "entityManagerFactory")
+    @DependsOn("liquibase")
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource());
@@ -142,6 +144,14 @@ public class ApplicationConfig {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory());
         return transactionManager;
+    }
+
+    @Bean(name = "liquibase")
+    public SpringLiquibase springLiquibase() {
+        SpringLiquibase springLiquibase = new SpringLiquibase();
+        springLiquibase.setDataSource(dataSource());
+        springLiquibase.setChangeLog("classpath:db/changelog/db.changelog-master.xml");
+        return springLiquibase;
     }
 
     @Bean(name = "mailSender")
