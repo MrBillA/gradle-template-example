@@ -62,7 +62,7 @@ FileUtils.rm_rf "src/main/java/com/edify"
 begin
   puts "\e[0;32m===> Creating first commit\e[m"
   `git add --all .`
-  `git commit -m "#{options[:name]} initial commit"`
+  `git commit -m "[#{options[:name]}] initial commit"`
   puts "\e[0;32m===> Changing origin url to [#{options[:repo]}]\e[m"
   `git remote set-url origin #{options[:repo]}`
 end unless options[:dry]
