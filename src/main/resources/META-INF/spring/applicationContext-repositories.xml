@@ -7,6 +7,6 @@
     http://www.springframework.org/schema/data/jpa
     http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-  <repositories base-package="change.me"/>
+  <repositories base-package="com.edify.repositories"/>
 
 </beans:beans>

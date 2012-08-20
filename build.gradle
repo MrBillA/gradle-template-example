@@ -42,7 +42,7 @@ repositories {
 }
 
 version = "0.0.1"
-group = "change.me"
+group = "com.edify"
 
 /**********************************************
  * Uncomment for Groovy/Java cross compilation *
