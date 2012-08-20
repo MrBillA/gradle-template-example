@@ -1,7 +1,7 @@
 package com.edify.config;
 
-import com.googlecode.flyway.core.Flyway;
 import com.jolbox.bonecp.BoneCPDataSource;
+import liquibase.integration.spring.SpringLiquibase;
 import org.hibernate.ejb.HibernatePersistence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -122,17 +122,18 @@ public class ApplicationConfig {
     }
 
     @Bean(name = "entityManagerFactory")
-    @DependsOn("flyway")
+    @DependsOn("liquibase")
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource());
         localContainerEntityManagerFactoryBean.setPersistenceProvider(persistenceProvider());
-        localContainerEntityManagerFactoryBean.setPackagesToScan("change.me.model");
+        localContainerEntityManagerFactoryBean.setPackagesToScan("com.edify.model");
         localContainerEntityManagerFactoryBean.setJpaDialect(jpaDialect());
         Properties jpaProperties = new Properties();
         jpaProperties.setProperty("hibernate.dialect", hibernateDialect);
         jpaProperties.setProperty("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
         jpaProperties.setProperty("hibernate.connection.charSet", "UTF-8");
+        jpaProperties.setProperty("hibernate.hbm2ddl.auto", "validate");
         localContainerEntityManagerFactoryBean.setJpaProperties(jpaProperties);
         localContainerEntityManagerFactoryBean.afterPropertiesSet();
         return localContainerEntityManagerFactoryBean.getObject();
@@ -143,6 +144,14 @@ public class ApplicationConfig {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory());
         return transactionManager;
+    }
+
+    @Bean(name = "liquibase")
+    public SpringLiquibase springLiquibase() {
+        SpringLiquibase springLiquibase = new SpringLiquibase();
+        springLiquibase.setDataSource(dataSource());
+        springLiquibase.setChangeLog("classpath:db/changelog/db.changelog-master.xml");
+        return springLiquibase;
     }
 
     @Bean(name = "mailSender")
@@ -160,12 +169,5 @@ public class ApplicationConfig {
         }
         mailSender.setJavaMailProperties(javaMailProperties);
         return mailSender;
-    }
-
-    @Bean(name = "flyway", initMethod = "migrate")
-    public Flyway flyway() {
-        Flyway flyway = new Flyway();
-        flyway.setDataSource(dataSource());
-        return flyway;
     }
 }

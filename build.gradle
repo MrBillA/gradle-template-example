@@ -22,6 +22,7 @@ apply plugin: "jetty"
 //apply plugin: "groovy"
 apply plugin: "idea"
 //apply plugin: "eclipse"
+apply from: "liquibase.gradle"
 
 repositories {
     add(new org.apache.ivy.plugins.resolver.URLResolver()) {
@@ -33,6 +34,9 @@ repositories {
     }
     maven {
         url "http://repo.springsource.org/milestone"
+    }
+    maven {
+        url "http://artifactory.edify.cr/artifactory/repo"
     }
     mavenCentral()
 }
@@ -53,6 +57,7 @@ configurations {
     all*.exclude group: "commons-logging"
     all*.exclude module: "log4j"
     yui
+    //liquibase
 }
 
 task wrapper(type: Wrapper) {
@@ -168,8 +173,6 @@ dependencies {
     compile "commons-codec:commons-codec:1.6"
     // ** BoneCP **
     compile "com.jolbox:bonecp:0.7.1.RELEASE"
-    // ** FlyWay **
-    compile "com.googlecode.flyway:flyway-core:1.7"
     // ** SLF4J **
     compile "org.slf4j:slf4j-api:$SLF4J_VERSION"
     runtime "org.slf4j:jcl-over-slf4j:$SLF4J_VERSION"
@@ -192,6 +195,8 @@ dependencies {
     // ** Web Filters **
     compile "net.sf.ehcache:ehcache-web:2.0.4"
     compile "org.tuckey:urlrewritefilter:4.0.4"
+    // ** Liquibase **
+    compile "org.liquibase:liquibase-core:2.0.5"
 
     runtime "janino:janino:2.5.10"
 
