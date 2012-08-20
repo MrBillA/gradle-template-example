@@ -34,6 +34,8 @@ end unless options[:repo] || options[:basepkg] || options[:name]
 
 # Replace the project name
 puts "\e[0;32m===> Replacing changeme for project name [#{options[:name]}]\e[m"
+`sed -i .bak -e 's/java/#{options[:name]}/g' gradle.properties`
+`sed -i .bak -e 's/java_template/#{options[:name]}/g' gradle.properties`
 `sed -i .bak -e 's/changeme.root/#{options[:name]}.root/g' src/main/webapp/WEB-INF/web.xml`
 `sed -i .bak -e 's/changeme.log/#{options[:name]}.log/g' src/main/resources/logback.xml`
 `sed -i .bak -e 's/changeme.%i.log.zip/#{options[:name]}.%i.log.zip/g' src/main/resources/logback.xml`
