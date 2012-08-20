@@ -1,0 +1,116 @@
+import groovy.xml.StreamingMarkupBuilder
+
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.stream.StreamResult
+import javax.xml.transform.stream.StreamSource
+
+configurations {
+    liquibase
+}
+
+task generateChangelog << {
+    println "\u001b[0;32m===> Generating Liquibase Changelog [${outputFile}]\u001b[m"
+    ant {
+        path(id: "classpath") {
+            pathelement(path: configurations.liquibase.asPath)
+        }
+        taskdef(name: "generateChangeLog", classname: "liquibase.integration.ant.GenerateChangeLogTask", classpathref: "classpath")
+        generateChangeLog(outputFile: "$basedir/src/main/resources/db/changelog/${outputFile}",
+                driver: DATABASE_DRIVER_CLASSNAME,
+                url: DATABASE_URL,
+                username: DATABASE_USERNAME,
+                password: DATABASE_PASSWORD,
+                classpathref: "classpath")
+    }
+    def masterChangelogFile = new File("src/main/resources/db/changelog/db.changelog-master.xml")
+    def root = new XmlSlurper(false, false).parse(masterChangelogFile)
+    root.appendNode {
+        include(file: outputFile, relativeToChangelogFile: "true")
+    }
+
+    String xml = (new StreamingMarkupBuilder()).bind { mkp.yield root }
+    //Pretty print since StreamingMarkupBuilder doesn't support it
+    def factory = TransformerFactory.newInstance()
+    factory.setAttribute("indent-number", 4);
+    javax.xml.transform.Transformer transformer = factory.newTransformer()
+    transformer.setOutputProperty(OutputKeys.INDENT, 'yes')
+    StreamResult result = new StreamResult(new StringWriter())
+    transformer.transform(new StreamSource(new ByteArrayInputStream(xml.bytes)), result)
+    //Write the new XML back to the master changelog file
+    masterChangelogFile.write result.writer.toString()
+}
+
+task updateDatabase << {
+    println "\u001b[0;32m===> Migrating database to latest changeset\u001b[m"
+    ant {
+        path(id: "classpath") {
+            pathelement(path: configurations.liquibase.asPath)
+        }
+        taskdef(name: "updateDatabase", classname: "liquibase.integration.ant.DatabaseUpdateTask", classpathref: "classpath")
+        updateDatabase(changeLogFile: "$basedir/src/main/resources/db/changelog/db.changelog-master.xml",
+                driver: DATABASE_DRIVER_CLASSNAME,
+                url: DATABASE_URL,
+                username: DATABASE_USERNAME,
+                password: DATABASE_PASSWORD,
+                promptOnNonLocalDatabase: true,
+                dropFirst: false,
+                classpathref: "classpath")
+    }
+}
+
+task tagDatabase << {
+    println "\u001b[0;32m===> Tag the database for rollback\u001b[m"
+    ant {
+        path(id: "classpath") {
+            pathelement(path: configurations.liquibase.asPath)
+        }
+        taskdef(name: "tagDatabase", classname: "liquibase.integration.ant.TagDatabaseTask", classpathref: "classpath")
+        tagDatabase(driver: DATABASE_DRIVER_CLASSNAME,
+                url: DATABASE_URL,
+                username: DATABASE_USERNAME,
+                password: DATABASE_PASSWORD,
+                classpathref: "classpath",
+                tag: tag)
+    }
+}
+
+task rollbackDatabase << {
+    println "\u001b[0;32m===> Rollback database to tag [$tag]\u001b[m"
+    ant {
+        path(id: "classpath") {
+            pathelement(path: configurations.liquibase.asPath)
+        }
+        taskdef(name: "rollbackDatabase", classname: "liquibase.integration.ant.DatabaseRollbackTask", classpathref: "classpath")
+        rollbackDatabase(changeLogFile: "$basedir/src/main/resources/db/changelog/db.changelog-master.xml",
+                driver: DATABASE_DRIVER_CLASSNAME,
+                url: DATABASE_URL,
+                username: DATABASE_USERNAME,
+                password: DATABASE_PASSWORD,
+                classpathref: "classpath",
+                rollbackTag: tag)
+    }
+}
+
+task dbDoc << {
+    println "\u001b[0;32m===> Generating dbdoc database documentation\u001b[m"
+    ant {
+        path(id: "classpath") {
+            pathelement(path: configurations.liquibase.asPath)
+        }
+        taskdef(name: "dbDoc", classname: "liquibase.integration.ant.DBDocTask", classpathref: "classpath")
+        dbDoc(changeLogFile: "$basedir/src/main/resources/db/changelog/db.changelog-master.xml",
+                driver: DATABASE_DRIVER_CLASSNAME,
+                url: DATABASE_URL,
+                username: DATABASE_USERNAME,
+                password: DATABASE_PASSWORD,
+                classpathref: "classpath",
+                outputDirectory: "$buildDir/dbdoc")
+    }
+}
+
+dependencies {
+    liquibase "org.liquibase:liquibase-core:2.0.5"
+    liquibase "postgresql:postgresql:9.1-901.jdbc4"
+    liquibase "org.hibernate:hibernate-core:$HIBERNATE_VERSION"
+}

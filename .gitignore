@@ -1,6 +1,7 @@
+*.bak
+*.min.css
+*.min.js
 atlassian-ide-plugin.xml
-*-min.js
-*-min.css
 *.log
 .gradle
 build
