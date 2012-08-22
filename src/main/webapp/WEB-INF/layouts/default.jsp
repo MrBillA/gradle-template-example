@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="r" tagdir="/WEB-INF/tags" %>
@@ -9,8 +10,8 @@
     <meta name="environment" content="${env}">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <r:resource url="css/normalize.min" type="css" minify="false"/>
     <r:resource url="css/bootstrap.min" type="css" minify="false"/>
+    <r:resource url="css/bootstrap-responsive.min" type="css" minify="false"/>
     <r:resource url="css/application" type="css" minify="true"/>
     <title>My Site - <decorator:title default="Welcome!"/></title>
     <decorator:head/>
@@ -36,16 +37,23 @@
     </footer>
 </div>
 <!-- /container -->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <r:resource url="js/modernizr-2.0.6.min" type="js" minify="false"/>
 <r:resource url="js/application" type="js" minify="true"/>
 <r:resource url="js/ujs" type="js" minify="true"/>
+<r:resource url="js/i18next-1.4.0.min" type="js" minify="false"/>
 <!--[if lt IE 7 ]>
 <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
 <script>window.attachEvent('onload', function () {
     CFInstall.check({mode:'overlay'})
 })</script>
 <![endif]-->
+<script>
+    window.i18nextOptions = {
+        useLocalStorage: false,
+        resGetPath:'${pageContext.request.contextPath}/translations/__lng__/__ns__'
+    };
+</script>
+<decorator:extractProperty property="page.defer"/>
 </body>
 </html>
