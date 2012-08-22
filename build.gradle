@@ -105,6 +105,11 @@ task compressAll(dependsOn: [":compileLess"]) << {
     }
 }
 
+task(dbSeed, type: JavaExec) {
+    main = "com.edify.db.Seed"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 processResources {
     filter(org.apache.tools.ant.filters.ReplaceTokens,
             tokens: [
