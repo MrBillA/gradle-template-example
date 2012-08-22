@@ -26,7 +26,7 @@ task generateChangelog << {
     def masterChangelogFile = new File("src/main/resources/db/changelog/db.changelog-master.xml")
     def root = new XmlSlurper(false, false).parse(masterChangelogFile)
     root.appendNode {
-        include(file: outputFile, relativeToChangelogFile: "true")
+        include(file: "db/changelog/$outputFile")
     }
 
     String xml = (new StreamingMarkupBuilder()).bind { mkp.yield root }
