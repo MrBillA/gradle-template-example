@@ -1,5 +1,6 @@
 package com.edify.model;
 
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ public class User {
     private Long id;
     @NotBlank
     @NotNull
+    @Email
     private String username;
     @NotNull
     @NotBlank

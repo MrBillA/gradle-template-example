@@ -2,17 +2,21 @@ package com.edify.web.controllers;
 
 import com.edify.model.User;
 import com.edify.repositories.UserRepository;
+import org.hibernate.validator.HibernateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Validation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
 
 /**
  * @author: <a href="https://github.com/jarias">jarias</a>
@@ -29,7 +33,9 @@ public class UsersController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/list")
-    public @ResponseBody Map list(HttpServletRequest request) {
+    public
+    @ResponseBody
+    Map list(HttpServletRequest request) {
         List<User> users = userRepository.findAll();
         List<String[]> aaData = new ArrayList<String[]>();
         for (User user : users) {
@@ -46,17 +52,25 @@ public class UsersController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/create")
-    public String create() {
+    public String create(Model model) {
+        model.addAttribute("user", new User());
         return "users/create";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/save")
-    public String save() {
-        return "redirect:/users/index";
+    public String save(@Valid @ModelAttribute User user, BindingResult result, final RedirectAttributes redirectAttrs, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("error", "Validation errors pelase check the form and re-submit");
+            return "users/create";
+        } else {
+            userRepository.save(user);
+            redirectAttrs.addFlashAttribute("message", "All OK!");
+            return "redirect:/users/index";
+        }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/edit")
-    public String edit() {
+    @RequestMapping(method = RequestMethod.GET, value = "/edit/{id}")
+    public String edit(@PathVariable("id") Long id) {
         return "users/edit";
     }
 
@@ -66,7 +80,9 @@ public class UsersController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/delete")
-    public String delete() {
+    public String delete(@RequestParam(value = "id") Long id, RedirectAttributes redirectAttrs) {
+        userRepository.delete(id);
+        redirectAttrs.addFlashAttribute("message", "users.form.message.delete.successful");
         return "redirect:/users/index";
     }
 }

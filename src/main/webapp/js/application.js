@@ -48,7 +48,7 @@ $(function () {
                             $.each(json.aaData, function (index, value) {
                                 var entityId = value[0]
                                 value[0] = '<input name="id" type="checkbox" value="' + entityId + '">';
-                                value.push('<a href="' + editRowUrl + "/" + entityId + '">edit</a> | <a href="' + deleteRowUrl + "/" + entityId + '">delete</a>');
+                                value.push('<a href="' + editRowUrl + "/" + entityId + '">edit</a> | <a data-method="delete" href="' + deleteRowUrl + "/?id=" + entityId + '">delete</a>');
 
                             });
                             fnCallback(json);

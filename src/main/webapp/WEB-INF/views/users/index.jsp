@@ -1,20 +1,20 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="r" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="e" tagdir="/WEB-INF/tags" %>
 <!doctype html>
 <html>
 <head>
     <title><spring:message code="page.users"/></title>
-    <r:resource url="css/datatables/datatables" type="css" minify="false"/>
+    <e:resource url="css/datatables/datatables" type="css" minify="false"/>
     <content tag="defer">
-        <r:resource url="js/datatables/jquery.dataTables.min" type="js" minify="false"/>
-        <r:resource url="js/datatables/jquery.dataTables.bootstrap.min" type="js" minify="false"/>
+        <e:resource url="js/datatables/jquery.dataTables.min" type="js" minify="false"/>
+        <e:resource url="js/datatables/jquery.dataTables.bootstrap.min" type="js" minify="false"/>
     </content>
 </head>
 <body>
 <div>
-    <form:form action="users/delete" method="DELETE">
+    <form:form action="${pageContext.request.contextPath}/users/delete" method="delete">
         <div class="row-fluid entity-actions">
             <a class="btn btn-primary" href="${pageContext.request.contextPath}/users/create">
                 <i class="icon-plus"></i>
