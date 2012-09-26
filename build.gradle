@@ -165,7 +165,9 @@ dependencies {
     compile "org.springframework.security:spring-security-config:$SPRING_SECURITY_VERSION"
     compile "org.springframework.security:spring-security-web:$SPRING_SECURITY_VERSION"
     // ** Spring Data JPA **
-    compile "org.springframework.data:spring-data-jpa:$SPRING_DATA_JPA_VERSION"
+    compile("org.springframework.data:spring-data-jpa:$SPRING_DATA_JPA_VERSION") {
+      exclude(group: "org.springframework")
+    }
     // ** Scribe OAuth **
     compile "org.scribe:scribe:1.3.1"
     // ** SiteMesh **
