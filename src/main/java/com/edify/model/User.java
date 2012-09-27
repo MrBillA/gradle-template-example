@@ -6,6 +6,11 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author: <a href="https://github.com/jarias">jarias</a>
  */
@@ -67,5 +72,15 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @PreUpdate
+    @PrePersist
+    private void encodePassword() {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (StringUtils.isNotBlank(password) && !password.startsWith("$2a$10$")) {
+            String hashedPassword = passwordEncoder.encode(password);
+            password = hashedPassword;
+        }
     }
 }
