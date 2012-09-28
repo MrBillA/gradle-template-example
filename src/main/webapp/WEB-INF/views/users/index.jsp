@@ -20,10 +20,10 @@
                 <i class="icon-plus"></i>
                 <spring:message code="buttons.new"/>
             </a>
-            <a href="#" class="btn primary" id="delete-selected">
+            <button type="submit" class="btn primary" id="delete-selected">
                 <i class="icon-trash"></i>
                 <spring:message code='buttons.delete.selected'/>
-            </a>
+            </button>
         </div>
 
         <div class="row-fluid">
@@ -33,7 +33,7 @@
                    data-edit-row-url="${pageContext.request.contextPath}/users/edit">
                 <thead>
                 <tr>
-                    <th class="datatable-select"></th>
+                    <th class="datatable-select"><input type="checkbox" id="select-all"/></th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>

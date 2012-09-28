@@ -1,0 +1,1 @@
+web: java $JAVA_OPTS -Dorg.eclipse.jetty.LEVEL=WARN -jar server/jetty-runner.jar --port $PORT build/libs/*.war

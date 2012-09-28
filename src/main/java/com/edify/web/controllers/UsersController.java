@@ -5,6 +5,9 @@ import com.edify.repositories.UserRepository;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,7 +32,7 @@ public class UsersController {
     private MessageSource messageSource;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
+    @Autowired(required = false)
     private Validator validator;
 
     @RequestMapping(method = RequestMethod.GET, value = "/index")
@@ -41,7 +44,11 @@ public class UsersController {
     public
     @ResponseBody
     Map list(HttpServletRequest request) {
-        List<User> users = userRepository.findAll();
+        Integer pageSize = new Integer(request.getParameter("iDisplayLength"));
+        Integer page = new Integer(request.getParameter("iDisplayStart")) / pageSize;
+        Sort sort = new Sort(Sort.Direction.fromString(request.getParameter("sSortDir_0")), User.TABLE_COLUMNS[new Integer(request.getParameter("iSortCol_0"))]);
+        PageRequest pageRequest = new PageRequest(page, pageSize, sort);
+        Page<User> users = userRepository.findAll(pageRequest);
         List<String[]> aaData = new ArrayList<String[]>();
         for (User user : users) {
             String el[] = {String.valueOf(user.getId()), user.getFirstName(), user.getLastName(), user.getUsername()};
@@ -101,8 +108,10 @@ public class UsersController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/delete")
-    public String delete(@RequestParam(value = "id") Long id, RedirectAttributes redirectAttrs) {
-        userRepository.delete(id);
+    public String delete(@RequestParam(value = "id") Long[] ids, RedirectAttributes redirectAttrs) {
+        for (Long id : ids) {
+            userRepository.delete(id);
+        }
         redirectAttrs.addFlashAttribute("message", "page.users.message.delete.success");
         return "redirect:/users/index";
     }

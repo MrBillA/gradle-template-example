@@ -3,6 +3,14 @@ $(function () {
         $('#delete-selected').closest('form').submit();
     });
 
+    $('#select-all').click(function () {
+        if ($(this).attr('checked')) {
+            $('.entity-id').attr('checked', true);
+        } else {
+            $('.entity-id').removeAttr('checked');
+        }
+    });
+
     $.i18n.init(window.i18nextOptions, function () {
         if (typeof $('.datatable').dataTable == 'function') {
             $('.datatable').dataTable({
@@ -32,6 +40,7 @@ $(function () {
                 "sDom":"<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
                 "sPaginationType":"bootstrap",
                 "bServerSide":true,
+                "bFilter": false,
                 "sAjaxSource":$('.datatable').data("source-url"),
                 "aoColumnDefs":[
                     { "bSortable":false, "aTargets":[ 0, -1 ] }
@@ -47,7 +56,7 @@ $(function () {
                             var editRowUrl = $('.datatable').data("edit-row-url");
                             $.each(json.aaData, function (index, value) {
                                 var entityId = value[0]
-                                value[0] = '<input name="id" type="checkbox" value="' + entityId + '">';
+                                value[0] = '<input class="entity-id" name="id" type="checkbox" value="' + entityId + '">';
                                 value.push('<a href="' + editRowUrl + "/" + entityId + '">edit</a> | <a data-method="delete" href="' + deleteRowUrl + "/?id=" + entityId + '">delete</a>');
 
                             });

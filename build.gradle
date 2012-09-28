@@ -14,6 +14,7 @@ buildscript {
 }
 
 import org.lesscss.LessCompiler
+import groovy.xml.MarkupBuilder
 
 apply plugin: "java"
 apply plugin: "war"
@@ -57,15 +58,31 @@ configurations {
     all*.exclude group: "commons-logging"
     all*.exclude module: "log4j"
     yui
-    //liquibase
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.1'
 }
 
+task generateRebel << {
+    def rebelFile = sourceSets.main.output.classesDir.absolutePath + '/rebel.xml'
+
+    def srcWebApp = project.webAppDir.absolutePath
+    def writer = new FileWriter(rebelFile)
+    new MarkupBuilder(writer).application() {
+        classpath {
+            dir(name: sourceSets.main.output.classesDir.absolutePath)
+        }
+        web {
+            link(target: '/') {
+                dir(name: srcWebApp)
+            }
+        }
+    }
+}
+
 war {
-    dependsOn += ["compressAll"]
+    dependsOn += ["compressAll", "generateRebel"]
 }
 
 task compileLess << {
@@ -166,7 +183,7 @@ dependencies {
     compile "org.springframework.security:spring-security-web:$SPRING_SECURITY_VERSION"
     // ** Spring Data JPA **
     compile("org.springframework.data:spring-data-jpa:$SPRING_DATA_JPA_VERSION") {
-      exclude(group: "org.springframework")
+        exclude(group: "org.springframework")
     }
     // ** Scribe OAuth **
     compile "org.scribe:scribe:1.3.1"

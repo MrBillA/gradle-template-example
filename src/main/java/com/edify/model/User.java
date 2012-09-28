@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class User {
+    public static final String[] TABLE_COLUMNS = {"id", "firstName", "lastName", "username"};
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

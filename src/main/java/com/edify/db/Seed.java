@@ -22,5 +22,14 @@ public class Seed {
         user.setPassword("123");
 
         userRepository.save(user);
+
+        for (int i = 0; i < 20; i++) {
+            User u = new User();
+            u.setFirstName(String.valueOf(i));
+            u.setLastName(String.valueOf(i));
+            u.setUsername(String.valueOf(i) + "@test.org");
+            u.setPassword("123");
+            userRepository.save(u);
+        }
     }
 }
