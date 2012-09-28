@@ -1,18 +1,17 @@
 package com.edify.model;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import org.apache.commons.lang.StringUtils;
+import javax.validation.constraints.Size;
 
 /**
- * @author: <a href="https://github.com/jarias">jarias</a>
+ * @author <a href="https://github.com/jarias">jarias</a>
  */
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
@@ -27,6 +26,7 @@ public class User {
     private String username;
     @NotNull
     @NotBlank
+    @Size(min = 6)
     private String password;
     @NotNull
     @NotBlank
