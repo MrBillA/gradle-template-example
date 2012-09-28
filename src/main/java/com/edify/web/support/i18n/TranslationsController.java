@@ -22,7 +22,7 @@ public class TranslationsController {
     @Autowired
     MessageSource messageSource;
 
-    @RequestMapping(value = "/translations/{lang}/{ns}")
+    @RequestMapping(value = "/translations/{lang}/{ns}.json")
     @ResponseBody
     public Map<String, Object> translations(@PathVariable("lang") String lang, @PathVariable("ns") String ns) {
         Map<String, Object> t = new HashMap<String, Object>();
