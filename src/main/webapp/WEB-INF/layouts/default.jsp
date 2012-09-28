@@ -19,20 +19,24 @@
 </head>
 
 <body>
-<jsp:include page="../views/header.jsp"/>
+<header>
+    <jsp:include page="../views/header.jsp"/>
+</header>
 
 <div class="container">
     <div class="row">
-        <c:if test="${not empty message}">
-            <div class="alert-success alert">
-                <spring:message code="${message}"/>
-            </div>
-        </c:if>
-        <c:if test="${not empty error}">
-            <div class="alert-error alert">
-                <spring:message code="${error}"/>
-            </div>
-        </c:if>
+        <div class="span12">
+            <c:if test="${not empty message}">
+                <div class="alert-success alert">
+                    <spring:message code="${message}"/>
+                </div>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div class="alert-error alert">
+                    <spring:message code="${error}"/>
+                </div>
+            </c:if>
+        </div>
     </div>
     <div class="row">
         <decorator:body/>

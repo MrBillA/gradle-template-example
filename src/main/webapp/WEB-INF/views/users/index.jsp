@@ -13,7 +13,7 @@
     </content>
 </head>
 <body>
-<div>
+<div class="span12">
     <form:form action="${pageContext.request.contextPath}/users/delete" method="delete">
         <div class="row-fluid entity-actions">
             <a class="btn btn-primary" href="${pageContext.request.contextPath}/users/create">
