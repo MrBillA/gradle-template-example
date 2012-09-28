@@ -15,20 +15,20 @@
 
 <c:choose>
     <c:when test="${minify == 'true' && env == 'production'}">
-        <c:set var="resourceExtension" value=".min.${type}"/>
+        <c:set var="resourceExtension" value=".min_${cacheBuster}.${type}"/>
     </c:when>
     <c:otherwise>
-        <c:set var="resourceExtension" value=".${type}"/>
+        <c:set var="resourceExtension" value="_${cacheBuster}.${type}"/>
     </c:otherwise>
 </c:choose>
 
 <c:choose>
     <c:when test="${type == 'js'}">
-        <script src="${pageContext.request.contextPath}/${url}${resourceExtension}${cacheBuster}"
+        <script src="${pageContext.request.contextPath}/${url}${resourceExtension}"
                 type="text/javascript"></script>
     </c:when>
     <c:when test="${type == 'css'}">
-        <link href="${pageContext.request.contextPath}/${url}${resourceExtension}${cacheBuster}" rel="stylesheet"
+        <link href="${pageContext.request.contextPath}/${url}${resourceExtension}" rel="stylesheet"
               type="text/css">
     </c:when>
     <c:otherwise> </c:otherwise>
