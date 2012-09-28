@@ -5,7 +5,7 @@
 <!doctype html>
 <html>
 <head>
-    <title><spring:message code="page.users"/></title>
+    <title><spring:message code="page.users.index.title"/></title>
     <e:resource url="css/datatables/datatables" type="css" minify="false"/>
     <content tag="defer">
         <e:resource url="js/datatables/jquery.dataTables.min" type="js" minify="false"/>

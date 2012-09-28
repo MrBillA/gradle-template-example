@@ -33,7 +33,7 @@
                 <spring:message code="${error}"/>
             </div>
         </c:if>
-   </div>
+    </div>
     <div class="row">
         <decorator:body/>
     </div>
