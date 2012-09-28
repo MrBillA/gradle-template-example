@@ -60,7 +60,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         webContentInterceptor.setUseCacheControlHeader(true);
         webContentInterceptor.setUseCacheControlNoStore(false);
         webContentInterceptor.setCacheSeconds(assetsCacheSeconds);
-        registry.addInterceptor(webContentInterceptor).addPathPatterns("/css/*.css", "/js/*.js", "/img/*.png", "/img/*.jpg", "/*.ico");
+        registry.addInterceptor(webContentInterceptor).addPathPatterns("/translations/**");
     }
 
     @Bean
