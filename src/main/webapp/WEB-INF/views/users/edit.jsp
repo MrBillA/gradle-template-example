@@ -8,7 +8,7 @@
     <title><spring:message code="page.users.edit.title"/></title>
 </head>
 <body>
-<div class="row-fluid">
+<div class="span12">
     <form:form action="${pageContext.request.contextPath}/users/update" class="form-horizontal" method="put" commandName="user">
         <fieldset>
             <legend><spring:message code="page.users.edit.form.legend"/></legend>
