@@ -26,7 +26,7 @@ import java.util.Properties;
 @EnableWebMvc
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
-    @Value("${assets.CacheSeconds}")
+    @Value("${ASSETS_CACHE_SECONDS}")
     private int assetsCacheSeconds;
 
     @Override

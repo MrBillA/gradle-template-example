@@ -19,7 +19,7 @@ public class EnvironmentInterceptor extends HandlerInterceptorAdapter {
     public static final String ASSETS_CACHE_BUSTER_PARAM_NAME = "cacheBuster";
 
     //Use for cache busting
-    @Value("${git.sha}")
+    @Value("${GIT_SHA}")
     private String gitSha;
 
     @Override
