@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author jarias
@@ -94,6 +96,21 @@ public class ApplicationConfig {
 
     @Bean
     public DataSource dataSource() {
+        // If we are in Heroku the database URL should match postgres://(.+?):(.+?)@(.+?):(.+?)/(.+)
+        // This URL includes username = $1, password = $2, hostname = $3, port = $4, database = $5
+        Pattern herokuDatabaseUrlPattern = Pattern.compile("postgres://(.+?):(.+?)@(.+?):(.+?)/(.+)");
+        Matcher herokuDatabaseUrlMatcher = herokuDatabaseUrlPattern.matcher(databaseUrl);
+        if (herokuDatabaseUrlMatcher.matches()) {
+            //We are in Heroku or our at least the database URL uses the same PostgreSQL format
+            databaseUsername = herokuDatabaseUrlMatcher.group(1);
+            databasePassword = herokuDatabaseUrlMatcher.group(2);
+            //Now we need a valid JDBC PostgreSQL
+            databaseUrl = String.format("jdbc:postgresql://%s:%s/%s",
+                    herokuDatabaseUrlMatcher.group(3),
+                    herokuDatabaseUrlMatcher.group(4),
+                    herokuDatabaseUrlMatcher.group(5));
+        } //Else nothing use the properties as they come.
+
         BoneCPDataSource ds = new BoneCPDataSource();
         ds.setDriverClass(databaseDriverClassname);
         ds.setJdbcUrl(databaseUrl);
