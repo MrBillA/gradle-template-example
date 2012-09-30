@@ -50,7 +50,7 @@ puts "\e[0;32m===> Moving everything to the new base package [#{options[:basepkg
 project_base_pkg_dir = "src/main/java/#{options[:basepkg].gsub('.', '/')}"
 
 FileUtils.mkdir_p project_base_pkg_dir
-`mv src/main/java/* #{project_base_pkg_dir}/`
+`mv src/main/java/com/edify/* #{project_base_pkg_dir}/`
 
 FileUtils.rm_rf "src/main/java/com/edify"
 
