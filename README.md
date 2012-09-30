@@ -54,11 +54,11 @@ To start a new Java project based on this template simple clone it (yeah is that
 
 Test the app
 
-    > gradle tomcatRun
+    > ./gradlew tomcatRun
 
 or
 
-    > gradle jettyRun
+    > ./gradlew jettyRun
 
 Open [http://0.0.0.0:8080/your_app_name](http://0.0.0.0:8080/your_app_name) and you should see a nice **Hello World!** page
 
@@ -66,7 +66,7 @@ Open [http://0.0.0.0:8080/your_app_name](http://0.0.0.0:8080/your_app_name) and 
 
 Compiling Less manually:
 
-    > gradle compileLess
+    > ./gradlew compileLess
 
 Liquibase tasks:
 
