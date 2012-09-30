@@ -1,6 +1,7 @@
 package com.edify.config;
 
 import com.edify.web.servlet.EnvironmentInterceptor;
+import com.edify.web.support.i18n.CustomReloadableResourceBundleMessageSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,6 @@ import org.springframework.web.servlet.mvc.WebContentInterceptor;
 import org.springframework.web.servlet.theme.CookieThemeResolver;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
-import org.springframework.web.servlet.view.tiles2.TilesConfigurer;
 
 import java.util.Properties;
 
@@ -26,7 +26,7 @@ import java.util.Properties;
 @EnableWebMvc
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
-    @Value("${assets.CacheSeconds}")
+    @Value("${ASSETS_CACHE_SECONDS}")
     private int assetsCacheSeconds;
 
     @Override
@@ -60,7 +60,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         webContentInterceptor.setUseCacheControlHeader(true);
         webContentInterceptor.setUseCacheControlNoStore(false);
         webContentInterceptor.setCacheSeconds(assetsCacheSeconds);
-        registry.addInterceptor(webContentInterceptor).addPathPatterns("/css/*.css", "/js/*.js", "/img/*.png", "/img/*.jpg", "/*.ico");
+        registry.addInterceptor(webContentInterceptor).addPathPatterns("/translations/**");
     }
 
     @Bean
@@ -69,9 +69,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean(name = "messageSource")
-    public ReloadableResourceBundleMessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasenames(new String[]{"WEB-INF/i18n/messages"});
+    public CustomReloadableResourceBundleMessageSource messageSource() {
+        CustomReloadableResourceBundleMessageSource messageSource = new CustomReloadableResourceBundleMessageSource();
+        messageSource.setBasenames("WEB-INF/i18n/messages");
         messageSource.setFallbackToSystemLocale(false);
         messageSource.setCacheSeconds(1);
         return messageSource;

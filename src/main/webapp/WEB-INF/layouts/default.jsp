@@ -1,6 +1,8 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="r" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="e" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <!doctype html>
 <html>
@@ -9,23 +11,34 @@
     <meta name="environment" content="${env}">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <r:resource url="css/normalize.min" type="css" minify="false"/>
-    <r:resource url="css/bootstrap.min" type="css" minify="false"/>
-    <r:resource url="css/application" type="css" minify="true"/>
+    <e:resource url="css/bootstrap.min" type="css" minify="false"/>
+    <e:resource url="css/bootstrap-responsive.min" type="css" minify="false"/>
+    <e:resource url="css/application" type="css" minify="true"/>
     <title>My Site - <decorator:title default="Welcome!"/></title>
     <decorator:head/>
 </head>
 
 <body>
-<jsp:include page="../views/header.jsp"/>
+<header>
+    <jsp:include page="../views/header.jsp"/>
+</header>
 
 <div class="container">
     <div class="row">
-        <c:if test="${not empty message}">
-            <div class="alert-success alert">
-                    ${message}
-            </div>
-        </c:if>
+        <div class="span12">
+            <c:if test="${not empty message}">
+                <div class="alert-success alert fade in">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <spring:message code="${message}"/>
+                </div>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div class="alert-error alert fade in">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <spring:message code="${error}"/>
+                </div>
+            </c:if>
+        </div>
     </div>
     <div class="row">
         <decorator:body/>
@@ -36,16 +49,24 @@
     </footer>
 </div>
 <!-- /container -->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
-<r:resource url="js/modernizr-2.0.6.min" type="js" minify="false"/>
-<r:resource url="js/application" type="js" minify="true"/>
-<r:resource url="js/ujs" type="js" minify="true"/>
+<e:resource url="js/jquery-1.7.2.min" type="js" minify="false"/>
+<e:resource url="js/modernizr-2.0.6.min" type="js" minify="false"/>
+<e:resource url="js/application" type="js" minify="true"/>
+<e:resource url="js/bootstrap/bootstrap.min" type="js" minify="false"/>
+<e:resource url="js/ujs" type="js" minify="true"/>
+<e:resource url="js/i18next-1.4.0.min" type="js" minify="false"/>
 <!--[if lt IE 7 ]>
 <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
 <script>window.attachEvent('onload', function () {
     CFInstall.check({mode:'overlay'})
 })</script>
 <![endif]-->
+<script>
+    window.i18nextOptions = {
+        useLocalStorage:false,
+        resGetPath:'${pageContext.request.contextPath}/translations/__lng__/__ns__-${cacheBuster}.json'
+    };
+</script>
+<decorator:extractProperty property="page.defer"/>
 </body>
 </html>

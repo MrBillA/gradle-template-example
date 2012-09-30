@@ -1,24 +1,32 @@
 package com.edify.model;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
- * @author: <a href="https://github.com/jarias">jarias</a>
+ * @author <a href="https://github.com/jarias">jarias</a>
  */
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class User {
+    public static final String[] TABLE_COLUMNS = {"id", "firstName", "lastName", "username"};
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
     @NotNull
+    @Email
     private String username;
     @NotNull
     @NotBlank
+    @Size(min = 6)
     private String password;
     @NotNull
     @NotBlank
@@ -65,5 +73,15 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @PreUpdate
+    @PrePersist
+    private void encodePassword() {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (StringUtils.isNotBlank(password) && !password.startsWith("$2a$10$")) {
+            String hashedPassword = passwordEncoder.encode(password);
+            password = hashedPassword;
+        }
     }
 }
