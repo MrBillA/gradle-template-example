@@ -4,11 +4,11 @@
         "http://www.tuckey.org/res/dtds/urlrewrite3.2.dtd">
 <urlrewrite>
     <rule>
-        <from>^/css/(.+?)_.+\.css$</from>
+        <from>^/css/(.+?)_.+?\.css$</from>
         <to>/css/$1.css</to>
     </rule>
     <rule>
-        <from>^/js/(.+?)_.+\.js$</from>
+        <from>^/js/(.+?)_.+?\.js$</from>
         <to>/js/$1.js</to>
     </rule>
     <rule>
