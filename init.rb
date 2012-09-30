@@ -20,7 +20,7 @@ opts = OptionParser.new do |opt|
     options[:name] = name
   end
 
-  opt.on('-d', '', 'Dry run (don\'t commit changes)') do |name|
+  opt.on('-d', '', 'Dry run (don\'t commit changes)') do
     options[:dry] = true
   end
 end
@@ -36,28 +36,21 @@ end unless options[:repo] || options[:basepkg] || options[:name]
 puts "\e[0;32m===> Replacing changeme for project name [#{options[:name]}]\e[m"
 `sed -i .bak -e 's/java_template/#{options[:name]}/g' gradle.properties`
 `sed -i .bak -e 's/java/#{options[:name]}/g' gradle.properties`
-`sed -i .bak -e 's/changeme.root/#{options[:name]}.root/g' src/main/webapp/WEB-INF/web.xml`
-`sed -i .bak -e 's/changeme.log/#{options[:name]}.log/g' src/main/resources/logback.xml`
-`sed -i .bak -e 's/changeme.%i.log.zip/#{options[:name]}.%i.log.zip/g' src/main/resources/logback.xml`
-`sed -i .bak -e 's/file:%s\\/.gradle\\/changeme.properties/file:%s\\/.gradle\\/#{options[:name]}.properties/g' src/main/java/com/edify/config/ApplicationConfig.java`
+`find src/main -type f \\( ! -iname "*.png" \\) -exec sed -i .bak -e 's/changeme/#{options[:name]}/g' {} \\;`
 
 # Replace the base package
 puts "\e[0;32m===> Replacing com.edify for project base package [#{options[:basepkg]}]\e[m"
-`sed -i .bak -e 's/group = "com.edify"/group = "#{options[:basepkg]}"/g' build.gradle`
-`sed -i .bak -e 's/com.edify/#{options[:basepkg]}/g' src/main/java/com/edify/config/ApplicationConfig.java`
-`sed -i .bak -e 's/com.edify/#{options[:basepkg]}/g' src/main/java/com/edify/model/User.java`
-`sed -i .bak -e 's/com.edify/#{options[:basepkg]}/g' src/main/java/com/edify/config/WebConfig.java`
-`sed -i .bak -e 's/com.edify/#{options[:basepkg]}/g' src/main/java/com/edify/web/servlet/EnvironmentInterceptor.java`
-`sed -i .bak -e 's/com.edify/#{options[:basepkg]}/g' src/main/resources/META-INF/spring/applicationContext-repositories.xml`
-`sed -i .bak -e 's/com.edify/#{options[:basepkg]}/g' src/main/webapp/WEB-INF/web.xml`
+`sed -i .bak -e 's/com\\.edify/#{options[:basepkg]}/g' build.gradle`
+`find src/main -type f \\( ! -iname "*.png" \\) -exec sed -i .bak -e 's/com\\.edify/#{options[:basepkg]}/g' {} \\;`
+
+#Cleanup .bak files
+`find . -iname "*.bak" -exec rm {} \\;`
 
 puts "\e[0;32m===> Moving everything to the new base package [#{options[:basepkg]}]\e[m"
 project_base_pkg_dir = "src/main/java/#{options[:basepkg].gsub('.', '/')}"
 
 FileUtils.mkdir_p project_base_pkg_dir
-FileUtils.mv "src/main/java/com/edify/model", project_base_pkg_dir
-FileUtils.mv "src/main/java/com/edify/config", project_base_pkg_dir
-FileUtils.mv "src/main/java/com/edify/web", project_base_pkg_dir
+`mv src/main/java/com/edify/* #{project_base_pkg_dir}/`
 
 FileUtils.rm_rf "src/main/java/com/edify"
 
