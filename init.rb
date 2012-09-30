@@ -42,7 +42,9 @@ puts "\e[0;32m===> Replacing changeme for project name [#{options[:name]}]\e[m"
 puts "\e[0;32m===> Replacing com.edify for project base package [#{options[:basepkg]}]\e[m"
 `sed -i .bak -e 's/com.edify/#{options[:basepkg]}/g' build.gradle`
 `find src/main -type f \\( ! -iname "*.png" \\) -exec sed -i .bak -e 's/com.edify/#{options[:basepkg]}/g' {} \\;`
-`find src/main -iname "*.bak" -exec rm {} \\;`
+
+#Cleanup .bak files
+`find . -iname "*.bak" -exec rm {} \\;`
 
 puts "\e[0;32m===> Moving everything to the new base package [#{options[:basepkg]}]\e[m"
 project_base_pkg_dir = "src/main/java/#{options[:basepkg].gsub('.', '/')}"
