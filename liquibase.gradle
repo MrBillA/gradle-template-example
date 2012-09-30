@@ -41,11 +41,12 @@ task generateChangelog << {
     masterChangelogFile.write result.writer.toString()
 }
 
-task updateDatabase << {
+task updateDatabase(dependsOn: [":processResources"]) << {
     println "\u001b[0;32m===> Migrating database to latest changeset\u001b[m"
     ant {
         path(id: "classpath") {
             pathelement(path: configurations.liquibase.asPath)
+            pathelement(path: "$basedir/build/resources/main")
         }
         taskdef(name: "updateDatabase", classname: "liquibase.integration.ant.DatabaseUpdateTask", classpathref: "classpath")
         updateDatabase(changeLogFile: "$basedir/src/main/resources/db/changelog/db.changelog-master.xml",
