@@ -1,6 +1,4 @@
 *.bak
-*.min.css
-*.min.js
 atlassian-ide-plugin.xml
 *.log
 .gradle

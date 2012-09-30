@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author jarias
@@ -35,44 +37,44 @@ import java.util.Properties;
         "classpath:META-INF/spring/applicationContext-repositories.xml"})
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 public class ApplicationConfig {
-    @Value("${database.url}")
+    @Value("${DATABASE_URL}")
     private String databaseUrl;
-    @Value("${database.driver.classname}")
+    @Value("${DATABASE_DRIVER_CLASSNAME}")
     private String databaseDriverClassname;
-    @Value("${database.username}")
+    @Value("${DATABASE_USERNAME}")
     private String databaseUsername;
-    @Value("${database.password}")
+    @Value("${DATABASE_PASSWORD}")
     private String databasePassword;
-    @Value("${hibernate.dialect}")
+    @Value("${HIBERNATE_DIALECT}")
     private String hibernateDialect;
 
     //DataSource properties
-    @Value("${datasource.bonecp.IdleConnectionTestPeriodInMinutes}")
+    @Value("${DATASOURCE_BONECP_IDLE_CONNECTION_TEST_PERIOD_IN_MINUTES}")
     private Integer idleConnectionTestPeriodInMinutes;
-    @Value("${datasource.bonecp.IdleMaxAgeInMinutes}")
+    @Value("${DATASOURCE_BONECP_IDLE_MAX_AGE_IN_MINUTES}")
     private Integer idleMaxAgeInMinutes;
-    @Value("${datasource.bonecp.MaxConnectionsPerPartition}")
+    @Value("${DATASOURCE_BONECP_MAX_CONNECTIONS_PER_PARTITION}")
     private Integer maxConnectionsPerPartition;
-    @Value("${datasource.bonecp.MinConnectionsPerPartition}")
+    @Value("${DATASOURCE_BONECP_MIN_CONNECTIONS_PER_PARTITION}")
     private Integer minConnectionsPerPartition;
-    @Value("${datasource.bonecp.PartitionCount}")
+    @Value("${DATASOURCE_BONECP_PARTITION_COUNT}")
     private Integer partitionCount;
-    @Value("${datasource.bonecp.AcquireIncrement}")
+    @Value("${DATASOURCE_BONECP_ACQUIREINCREMENT}")
     private Integer acquireIncrement;
-    @Value("${datasource.bonecp.StatementsCacheSize}")
+    @Value("${DATASOURCE_BONECP_STATEMENTS_CACHE_SIZE}")
     private Integer statementsCacheSize;
-    @Value("${datasource.bonecp.ReleaseHelperThreads}")
+    @Value("${DATASOURCE_BONECP_RELEASE_HELPER_THREADS}")
     private Integer releaseHelperThreads;
 
-    @Value("${mail.smtp.host}")
+    @Value("${MAIL_SMTP_HOST}")
     private String mailSMTPHost;
-    @Value("${mail.smtp.port}")
+    @Value("${MAIL_SMTP_PORT}")
     private Integer mailSMTPPort;
-    @Value("${mail.smtp.auth}")
+    @Value("${MAIL_SMTP_AUTH}")
     private Boolean mailSMTPAuth;
-    @Value("${mail.smtp.username}")
+    @Value("${MAIL_SMTP_USERNAME}")
     private String mailSMTPUsername;
-    @Value("${mail.smtp.password}")
+    @Value("${MAIL_SMTP_PASSWORD}")
     private String mailSMTPPassword;
 
     @Bean
@@ -94,6 +96,21 @@ public class ApplicationConfig {
 
     @Bean
     public DataSource dataSource() {
+        // If we are in Heroku the database URL should match postgres://(.+?):(.+?)@(.+?):(.+?)/(.+)
+        // This URL includes username = $1, password = $2, hostname = $3, port = $4, database = $5
+        Pattern herokuDatabaseUrlPattern = Pattern.compile("postgres://(.+?):(.+?)@(.+?):(.+?)/(.+)");
+        Matcher herokuDatabaseUrlMatcher = herokuDatabaseUrlPattern.matcher(databaseUrl);
+        if (herokuDatabaseUrlMatcher.matches()) {
+            //We are in Heroku or our at least the database URL uses the same PostgreSQL format
+            databaseUsername = herokuDatabaseUrlMatcher.group(1);
+            databasePassword = herokuDatabaseUrlMatcher.group(2);
+            //Now we need a valid JDBC PostgreSQL
+            databaseUrl = String.format("jdbc:postgresql://%s:%s/%s",
+                    herokuDatabaseUrlMatcher.group(3),
+                    herokuDatabaseUrlMatcher.group(4),
+                    herokuDatabaseUrlMatcher.group(5));
+        } //Else nothing use the properties as they come.
+
         BoneCPDataSource ds = new BoneCPDataSource();
         ds.setDriverClass(databaseDriverClassname);
         ds.setJdbcUrl(databaseUrl);
