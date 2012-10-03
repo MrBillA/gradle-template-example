@@ -11,6 +11,7 @@
     <meta name="environment" content="${env}">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <e:resource url="css/bootstrap.min" type="css" minify="false"/>
     <e:resource url="css/bootstrap-responsive.min" type="css" minify="false"/>
     <e:resource url="css/application" type="css" minify="true"/>
