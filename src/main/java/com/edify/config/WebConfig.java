@@ -5,7 +5,6 @@ import com.edify.web.support.i18n.CustomReloadableResourceBundleMessageSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.ui.context.support.ResourceBundleThemeSource;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
