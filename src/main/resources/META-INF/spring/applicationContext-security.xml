@@ -17,7 +17,7 @@
         <logout logout-url="/j_spring_security_logout"/>
         <!-- Configure these elements to secure URIs in your application -->
         <intercept-url pattern="/resources/**" access="permitAll"/>
-        <intercept-url pattern="/users/**" access="ROLE_ADMIN"/>
+        <intercept-url pattern="/users/**" access="hasRole('ROLE_ADMIN')"/>
     </http>
 
     <beans:bean name="authenticationProvider" class="com.edify.security.UserRepositoryAuthenticationProvider"/>
