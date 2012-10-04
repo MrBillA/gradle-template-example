@@ -1,6 +1,7 @@
 package com.edify.web.controllers;
 
 import com.edify.model.User;
+import com.edify.repositories.RoleRepository;
 import com.edify.repositories.UserRepository;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class UsersController {
     private MessageSource messageSource;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
     @Autowired(required = false)
     private Validator validator;
 
@@ -76,6 +79,7 @@ public class UsersController {
             model.addAttribute("user", user);
             return "users/create";
         } else {
+            user.getRoles().add(roleRepository.findByAuthority("ROLE_USER"));
             userRepository.save(user);
             redirectAttrs.addFlashAttribute("message", "page.users.message.create.success");
             return "redirect:/users/index";

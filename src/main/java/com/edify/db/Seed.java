@@ -1,7 +1,9 @@
 package com.edify.db;
 
 import com.edify.config.ApplicationConfig;
+import com.edify.model.Role;
 import com.edify.model.User;
+import com.edify.repositories.RoleRepository;
 import com.edify.repositories.UserRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -14,22 +16,28 @@ public class Seed {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 
         UserRepository userRepository = context.getBean(UserRepository.class);
+        RoleRepository roleRepository = context.getBean(RoleRepository.class);
 
-        User user = new User();
-        user.setFirstName("Julio");
-        user.setLastName("Arias");
-        user.setUsername("jarias@test.org");
-        user.setPassword("123");
+        String[] roleAuthorities = {"ROLE_USER", "ROLE_ADMIN"};
 
-        userRepository.save(user);
+        for (String authority : roleAuthorities) {
+            if (roleRepository.findByAuthority(authority) == null) {
+                Role r = new Role();
+                r.setAuthority(authority);
+                roleRepository.save(r);
+            }
+        }
 
-        for (int i = 0; i < 20; i++) {
-            User u = new User();
-            u.setFirstName(String.valueOf(i));
-            u.setLastName(String.valueOf(i));
-            u.setUsername(String.valueOf(i) + "@test.org");
-            u.setPassword("123");
-            userRepository.save(u);
+        if (userRepository.findByUsername("root@admin.local") == null) {
+            User user = new User();
+            user.setFirstName("Root");
+            user.setLastName("Admin");
+            user.setUsername("root@admin.local");
+            user.setPassword("123");
+            user.getRoles().add(roleRepository.findByAuthority("ROLE_USER"));
+            user.getRoles().add(roleRepository.findByAuthority("ROLE_ADMIN"));
+
+            userRepository.save(user);
         }
     }
 }

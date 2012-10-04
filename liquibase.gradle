@@ -10,13 +10,13 @@ configurations {
 }
 
 task generateChangelog << {
-    println "\u001b[0;32m===> Generating Liquibase Changelog [${outputFile}]\u001b[m"
+    println "\u001b[0;32m===> Generating Liquibase Changelog [${changelog}]\u001b[m"
     ant {
         path(id: "classpath") {
             pathelement(path: configurations.liquibase.asPath)
         }
         taskdef(name: "generateChangeLog", classname: "liquibase.integration.ant.GenerateChangeLogTask", classpathref: "classpath")
-        generateChangeLog(outputFile: "$basedir/src/main/resources/db/changelog/${outputFile}",
+        generateChangeLog(outputFile: "$basedir/src/main/resources/db/changelog/db.changelog-${changelog}.xml",
                 driver: DATABASE_DRIVER_CLASSNAME,
                 url: DATABASE_URL,
                 username: DATABASE_USERNAME,
@@ -26,7 +26,7 @@ task generateChangelog << {
     def masterChangelogFile = new File("src/main/resources/db/changelog/db.changelog-master.xml")
     def root = new XmlSlurper(false, false).parse(masterChangelogFile)
     root.appendNode {
-        include(file: "db/changelog/$outputFile")
+        include(file: "db/changelog/db.changelog-${changelog}.xml")
     }
 
     String xml = (new StreamingMarkupBuilder()).bind { mkp.yield root }

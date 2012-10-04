@@ -185,6 +185,7 @@ dependencies {
     compile "org.springframework.security:spring-security-core:$SPRING_SECURITY_VERSION"
     compile "org.springframework.security:spring-security-config:$SPRING_SECURITY_VERSION"
     compile "org.springframework.security:spring-security-web:$SPRING_SECURITY_VERSION"
+    compile "org.springframework.security:spring-security-taglibs:$SPRING_SECURITY_VERSION"
     // ** Spring Data JPA **
     compile("org.springframework.data:spring-data-jpa:$SPRING_DATA_JPA_VERSION") {
         exclude(group: "org.springframework")

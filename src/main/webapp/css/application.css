@@ -8,3 +8,7 @@ body{padding-top:60px;}
 .datatable-actions{width:150px;}
 .alert-box{height:50px;}
 .footer{margin-top:45px;padding:35px 0 36px;border-top:1px solid #E5E5E5;}.footer p{margin-bottom:0;color:#555;}
+.login-container{width:300px;margin-right:auto;margin-left:auto;*zoom:1;}.login-container:before,.login-container:after{display:table;content:"";line-height:0;}
+.login-container:after{clear:both;}
+.login-container .content{background-color:#eeeeee;padding:20px;margin:0 -20px;-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px;-webkit-box-shadow:0 1px 2px #999999;-moz-box-shadow:0 1px 2px #999999;box-shadow:0 1px 2px #999999;}
+.login-container .login-form{margin-left:65px;}
