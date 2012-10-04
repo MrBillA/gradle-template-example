@@ -5,7 +5,7 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-            <a class="brand" href="${pageContext.request.contextPath}/">Project name</a>
+            <a class="brand" href="${pageContext.request.contextPath}/"><spring:message code="project.name"/></a>
             <sec:authorize access="hasRole('ROLE_ADMIN')">
                 <ul class="nav">
                     <li class="${fn:startsWith(pageContext.request.requestURI, "/users/") ? "active" : ""}">

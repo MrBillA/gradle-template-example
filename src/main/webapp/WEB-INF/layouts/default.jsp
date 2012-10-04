@@ -15,7 +15,7 @@
     <e:resource url="css/bootstrap.min" type="css" minify="false"/>
     <e:resource url="css/bootstrap-responsive.min" type="css" minify="false"/>
     <e:resource url="css/application" type="css" minify="true"/>
-    <title>My Site - <decorator:title default="Welcome!"/></title>
+    <title><spring:message code="project.name"/> - <decorator:title default="Welcome!"/></title>
     <decorator:head/>
 </head>
 
