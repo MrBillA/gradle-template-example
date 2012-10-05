@@ -146,14 +146,25 @@ processResources {
             ])
 }
 
+def versions = [
+        spring: "3.1.2.RELEASE",
+        springSecurity: "3.1.1.RELEASE",
+        springDataJpa: "1.1.1.RELEASE",
+        slf4j: "1.6.6",
+        hibernate: "4.1.5.Final",
+        groovy: "2.0.5",
+        tomcat: "6.0.35",
+        logback: "1.0.6"
+]
+
 def hibernate = [
-        "org.hibernate:hibernate-core:$HIBERNATE_VERSION",
+        "org.hibernate:hibernate-core:${versions.hibernate}",
         "org.hibernate:hibernate-validator:4.3.0.Final",
-        "org.hibernate:hibernate-entitymanager:$HIBERNATE_VERSION",
+        "org.hibernate:hibernate-entitymanager:${versions.hibernate}",
         "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"]
 
 dependencies {
-    //groovy("org.codehaus.groovy:groovy-all:2.0.1")
+    //groovy("org.codehaus.groovy:groovy-all:${versions.groovy}")
     providedCompile("javax.servlet:servlet-api:2.5", "javax.el:el-api:2.2", "javax.servlet.jsp:jsp-api:2.1")
     testCompile("junit:junit:4.10", "org.easymock:easymock:3.1")
     // ** Hibernate **
@@ -168,26 +179,26 @@ dependencies {
         exclude(group: "org.springframework")
     }
     // ** Spring **
-    compile "org.springframework:spring-core:$SPRING_VERSION"
-    compile "org.springframework:spring-context:$SPRING_VERSION"
-    compile "org.springframework:spring-aop:$SPRING_VERSION"
-    compile "org.springframework:spring-aspects:$SPRING_VERSION"
-    compile "org.springframework:spring-tx:$SPRING_VERSION"
-    compile "org.springframework:spring-jdbc:$SPRING_VERSION"
-    compile "org.springframework:spring-orm:$SPRING_VERSION"
-    compile "org.springframework:spring-web:$SPRING_VERSION"
-    compile "org.springframework:spring-webmvc:$SPRING_VERSION"
-    compile "org.springframework:spring-context-support:$SPRING_VERSION"
-    compile "org.springframework:spring-test:$SPRING_VERSION"
+    compile "org.springframework:spring-core:${versions.spring}"
+    compile "org.springframework:spring-context:${versions.spring}"
+    compile "org.springframework:spring-aop:${versions.spring}"
+    compile "org.springframework:spring-aspects:${versions.spring}"
+    compile "org.springframework:spring-tx:${versions.spring}"
+    compile "org.springframework:spring-jdbc:${versions.spring}"
+    compile "org.springframework:spring-orm:${versions.spring}"
+    compile "org.springframework:spring-web:${versions.spring}"
+    compile "org.springframework:spring-webmvc:${versions.spring}"
+    compile "org.springframework:spring-context-support:${versions.spring}"
+    compile "org.springframework:spring-test:${versions.spring}"
     // ** AspectJ **
     compile "org.aspectj:aspectjrt:1.7.0"
     // ** Spring Security **
-    compile "org.springframework.security:spring-security-core:$SPRING_SECURITY_VERSION"
-    compile "org.springframework.security:spring-security-config:$SPRING_SECURITY_VERSION"
-    compile "org.springframework.security:spring-security-web:$SPRING_SECURITY_VERSION"
-    compile "org.springframework.security:spring-security-taglibs:$SPRING_SECURITY_VERSION"
+    compile "org.springframework.security:spring-security-core:${versions.springSecurity}"
+    compile "org.springframework.security:spring-security-config:${versions.springSecurity}"
+    compile "org.springframework.security:spring-security-web:${versions.springSecurity}"
+    compile "org.springframework.security:spring-security-taglibs:${versions.springSecurity}"
     // ** Spring Data JPA **
-    compile("org.springframework.data:spring-data-jpa:$SPRING_DATA_JPA_VERSION") {
+    compile("org.springframework.data:spring-data-jpa:${versions.springDataJpa}") {
         exclude(group: "org.springframework")
     }
     // ** Scribe OAuth **
@@ -203,12 +214,12 @@ dependencies {
     // ** BoneCP **
     compile "com.jolbox:bonecp:0.7.1.RELEASE"
     // ** SLF4J **
-    compile "org.slf4j:slf4j-api:$SLF4J_VERSION"
-    runtime "org.slf4j:jcl-over-slf4j:$SLF4J_VERSION"
-    runtime "org.slf4j:log4j-over-slf4j:$SLF4J_VERSION"
+    compile "org.slf4j:slf4j-api:${versions.slf4j}"
+    runtime "org.slf4j:jcl-over-slf4j:${versions.slf4j}"
+    runtime "org.slf4j:log4j-over-slf4j:${versions.slf4j}"
     // ** LogBack **
-    compile "ch.qos.logback:logback-core:1.0.6"
-    compile "ch.qos.logback:logback-classic:1.0.6"
+    compile "ch.qos.logback:logback-core:${versions.logback}"
+    compile "ch.qos.logback:logback-classic:${versions.logback}"
     // ** Other **
     compile "com.google.guava:guava:13.0.1"
     compile "joda-time:joda-time:2.1"
@@ -230,10 +241,9 @@ dependencies {
 
     runtime "janino:janino:2.5.10"
 
-    def tomcatVersion = "6.0.35"
-    tomcat "org.apache.tomcat:catalina:${tomcatVersion}"
-    tomcat "org.apache.tomcat:coyote:${tomcatVersion}"
-    tomcat "org.apache.tomcat:jasper:${tomcatVersion}"
+    tomcat "org.apache.tomcat:catalina:${versions.tomcat}"
+    tomcat "org.apache.tomcat:coyote:${versions.tomcat}"
+    tomcat "org.apache.tomcat:jasper:${versions.tomcat}"
     yui "com.yahoo.platform.yui:yuicompressor:2.4.6"
     yui "noha:yui-compressor-ant-task:0.5.1"
 }
