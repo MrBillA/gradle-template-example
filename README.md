@@ -19,6 +19,7 @@ The template includes:
 * A basic layout using Sitemesh 2
 * Logging support using slf4j with logback backend
 * Basic logback configuration
+* [Liquibase](http://www.liquibase.org) for database migrations
 
 # Versions
 
@@ -70,7 +71,8 @@ Compiling Less manually:
 
 Liquibase tasks:
 
-* [generateChangelog](http://www.liquibase.org/manual/updatedatabase_ant_task)
+* generateChangelog
+* [generateDiffChangelog](http://www.liquibase.org/manual/updatedatabase_ant_task)
 * [updateDatabase](http://www.liquibase.org/manual/updatedatabase_ant_task)
 * [tagDatabase](http://www.liquibase.org/manual/tagdatabase_ant_task)
 * [rollbackDatabase](http://www.liquibase.org/manual/rollbackdatabase_ant_task)
@@ -78,7 +80,9 @@ Liquibase tasks:
 
 Liquibase updates the database at startup but you can do it manually using the tasks above.
 
-Always use the generateChangelog taks to create a new changelog this task also adds the include
+Always use the generateChangelog taks to create a new changelog this task also adds the include to the master changelog
+
+More info look the code documentation in liquibase.gradle
 
 # TODO
 

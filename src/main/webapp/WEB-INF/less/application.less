@@ -1,3 +1,4 @@
+@import "bootstrap/variables.less";
 @import "bootstrap/mixins.less";
 
 body {
@@ -27,5 +28,24 @@ body {
     p {
         margin-bottom: 0;
         color: #555;
+    }
+}
+
+.login-container {
+    width: 300px;
+    .container-fixed();
+
+    .content {
+        background-color: @grayLighter;
+        padding: 20px;
+        margin: 0 -20px;
+        .border-radius(10px);
+        -webkit-box-shadow: 0 1px 2px @grayLight;
+        -moz-box-shadow: 0 1px 2px @grayLight;
+        box-shadow: 0 1px 2px @grayLight;
+    }
+
+    .login-form {
+        margin-left: 65px;
     }
 }

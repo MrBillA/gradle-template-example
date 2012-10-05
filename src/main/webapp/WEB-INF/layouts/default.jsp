@@ -5,16 +5,17 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <!doctype html>
-<html>
+<html lang="${pageContext.response.locale.language}">
 <head>
     <meta name="git-commit" content="${cacheBuster}">
     <meta name="environment" content="${env}">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <e:resource url="css/bootstrap.min" type="css" minify="false"/>
     <e:resource url="css/bootstrap-responsive.min" type="css" minify="false"/>
     <e:resource url="css/application" type="css" minify="true"/>
-    <title>My Site - <decorator:title default="Welcome!"/></title>
+    <title><spring:message code="project.name"/> - <decorator:title default="Welcome!"/></title>
     <decorator:head/>
 </head>
 
@@ -51,10 +52,9 @@
 <!-- /container -->
 <e:resource url="js/jquery-1.7.2.min" type="js" minify="false"/>
 <e:resource url="js/modernizr-2.0.6.min" type="js" minify="false"/>
-<e:resource url="js/application" type="js" minify="true"/>
 <e:resource url="js/bootstrap/bootstrap.min" type="js" minify="false"/>
 <e:resource url="js/ujs" type="js" minify="true"/>
-<e:resource url="js/i18next-1.4.0.min" type="js" minify="false"/>
+<e:resource url="js/i18next-1.5.7.min" type="js" minify="false"/>
 <!--[if lt IE 7 ]>
 <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
 <script>window.attachEvent('onload', function () {
@@ -63,10 +63,12 @@
 <![endif]-->
 <script>
     window.i18nextOptions = {
+        lng:"${pageContext.response.locale}",
         useLocalStorage:false,
         resGetPath:'${pageContext.request.contextPath}/translations/__lng__/__ns__-${cacheBuster}.json'
     };
 </script>
+<e:resource url="js/application" type="js" minify="true"/>
 <decorator:extractProperty property="page.defer"/>
 </body>
 </html>

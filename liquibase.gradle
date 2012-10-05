@@ -1,6 +1,7 @@
 import groovy.xml.StreamingMarkupBuilder
 
 import javax.xml.transform.OutputKeys
+import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
@@ -9,38 +10,110 @@ configurations {
     liquibase
 }
 
-task generateChangelog << {
-    println "\u001b[0;32m===> Generating Liquibase Changelog [${outputFile}]\u001b[m"
-    ant {
-        path(id: "classpath") {
-            pathelement(path: configurations.liquibase.asPath)
-        }
-        taskdef(name: "generateChangeLog", classname: "liquibase.integration.ant.GenerateChangeLogTask", classpathref: "classpath")
-        generateChangeLog(outputFile: "$basedir/src/main/resources/db/changelog/${outputFile}",
-                driver: DATABASE_DRIVER_CLASSNAME,
-                url: DATABASE_URL,
-                username: DATABASE_USERNAME,
-                password: DATABASE_PASSWORD,
-                classpathref: "classpath")
-    }
+/**
+ * Writes and XML string with proper XML declaration and indentation using javax.xml.transform.Transformer
+ *
+ * @param xml The XML string
+ * @param file A file to write the formatted XML
+ */
+def writeXml(String xml, File file) {
+    TransformerFactory factory = TransformerFactory.newInstance()
+    factory.setAttribute("indent-number", 4)
+
+    Transformer transformer = factory.newTransformer()
+    transformer.setOutputProperty(OutputKeys.METHOD, "xml")
+    transformer.setOutputProperty(OutputKeys.INDENT, "yes")
+    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8")
+    transformer.setOutputProperty(OutputKeys.STANDALONE, "no")
+
+    StreamResult result = new StreamResult(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))
+    transformer.transform(new StreamSource(new ByteArrayInputStream(xml.bytes)), result)
+}
+
+/**
+ * This methods appends a new changelog to the db.changelog-master.xml file
+ *
+ * @param changelog The changelog name
+ */
+def addChangeLogToMaster(def changelog) {
     def masterChangelogFile = new File("src/main/resources/db/changelog/db.changelog-master.xml")
     def root = new XmlSlurper(false, false).parse(masterChangelogFile)
     root.appendNode {
-        include(file: "db/changelog/$outputFile")
+        include(file: "db/changelog/db.changelog-${changelog}.xml")
     }
 
     String xml = (new StreamingMarkupBuilder()).bind { mkp.yield root }
-    //Pretty print since StreamingMarkupBuilder doesn't support it
-    def factory = TransformerFactory.newInstance()
-    factory.setAttribute("indent-number", 4);
-    javax.xml.transform.Transformer transformer = factory.newTransformer()
-    transformer.setOutputProperty(OutputKeys.INDENT, 'yes')
-    StreamResult result = new StreamResult(new StringWriter())
-    transformer.transform(new StreamSource(new ByteArrayInputStream(xml.bytes)), result)
-    //Write the new XML back to the master changelog file
-    masterChangelogFile.write result.writer.toString()
+    writeXml(xml, masterChangelogFile)
 }
 
+/**
+ * This task generates an empty changelog XML file with 1 empty changeSet element
+ *
+ * Usage:
+ *
+ *     generateChangelog -Pchangelog=NAME
+ */
+task generateChangelog << {
+    try {
+        println "\u001b[0;32m===> Generating Liquibase Changelog [${changelog}]\u001b[m"
+        File changelogFile = new File("$projectDir/src/main/resources/db/changelog/db.changelog-${changelog}.xml")
+        String xml = new StreamingMarkupBuilder().bind() {
+            databaseChangeLog(xmlns: "http://www.liquibase.org/xml/ns/dbchangelog",
+                    "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                    "xsi:schemaLocation": "http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd") {
+                changeSet(id: "${String.valueOf(new Date().getTime())}-1", author: System.properties.getProperty("user.name"))
+            }
+        }
+        writeXml(xml, changelogFile)
+        addChangeLogToMaster(changelog)
+    } catch (MissingPropertyException mpe) {
+        println """
+\u001B[0;31m===> ERROR \u001B[m\n
+\u001B[0;33mUsage:\u001B[m\n
+    \u001B[0;32m./gradlew generateChangelog -Pchangelog=NAME\u001b[m
+        """
+    }
+}
+
+/**
+ * This task generates an changelog XML file with the diff between changelogs and the current database state
+ *
+ * Usage:
+ *
+ *     generateDiffChangelog -Pchangelog=NAME
+ */
+task generateDiffChangelog << {
+    try {
+        println "\u001b[0;32m===> Generating Liquibase Diff Changelog [${changelog}]\u001b[m"
+        ant {
+            path(id: "classpath") {
+                pathelement(path: configurations.liquibase.asPath)
+            }
+            taskdef(name: "generateChangeLog", classname: "liquibase.integration.ant.GenerateChangeLogTask", classpathref: "classpath")
+            generateChangeLog(outputFile: "$basedir/src/main/resources/db/changelog/db.changelog-${changelog}.xml",
+                    driver: DATABASE_DRIVER_CLASSNAME,
+                    url: DATABASE_URL,
+                    username: DATABASE_USERNAME,
+                    password: DATABASE_PASSWORD,
+                    classpathref: "classpath")
+        }
+        addChangeLogToMaster(changelog)
+    } catch (MissingPropertyException mpe) {
+        println """
+\u001B[0;31m===> ERROR \u001B[m\n
+\u001B[0;33mUsage:\u001B[m\n
+    \u001B[0;32m./gradlew generateChangelog -Pchangelog=NAME\u001b[m
+        """
+    }
+}
+
+/**
+ * This task updates the database up to the latest changelog
+ *
+ * Usage:
+ *
+ *     updateDatabase
+ */
 task updateDatabase(dependsOn: [":processResources"]) << {
     println "\u001b[0;32m===> Migrating database to latest changeset\u001b[m"
     ant {
@@ -60,39 +133,76 @@ task updateDatabase(dependsOn: [":processResources"]) << {
     }
 }
 
+/**
+ * This task tags the database for a future rollback
+ *
+ * Usage:
+ *
+ *     tagDatabase -Ptag=NAME
+ */
 task tagDatabase << {
-    println "\u001b[0;32m===> Tag the database for rollback\u001b[m"
-    ant {
-        path(id: "classpath") {
-            pathelement(path: configurations.liquibase.asPath)
+    try {
+        println "\u001b[0;32m===> Tag the database for rollback with tag [$tag]\u001b[m"
+        ant {
+            path(id: "classpath") {
+                pathelement(path: configurations.liquibase.asPath)
+            }
+            taskdef(name: "tagDatabase", classname: "liquibase.integration.ant.TagDatabaseTask", classpathref: "classpath")
+            tagDatabase(driver: DATABASE_DRIVER_CLASSNAME,
+                    url: DATABASE_URL,
+                    username: DATABASE_USERNAME,
+                    password: DATABASE_PASSWORD,
+                    classpathref: "classpath",
+                    tag: tag)
         }
-        taskdef(name: "tagDatabase", classname: "liquibase.integration.ant.TagDatabaseTask", classpathref: "classpath")
-        tagDatabase(driver: DATABASE_DRIVER_CLASSNAME,
-                url: DATABASE_URL,
-                username: DATABASE_USERNAME,
-                password: DATABASE_PASSWORD,
-                classpathref: "classpath",
-                tag: tag)
+    } catch (MissingPropertyException mpe) {
+        println """
+\u001B[0;31m===> ERROR \u001B[m\n
+\u001B[0;33mUsage:\u001B[m\n
+    \u001B[0;32m./gradlew tagDatabase -Ptag=NAME\u001b[m
+        """
     }
 }
 
+/**
+ * This task rollbacks the database to a specific tag
+ *
+ * Usage:
+ *
+ *     rollbackDatabase -Ptag=NAME
+ */
 task rollbackDatabase << {
-    println "\u001b[0;32m===> Rollback database to tag [$tag]\u001b[m"
-    ant {
-        path(id: "classpath") {
-            pathelement(path: configurations.liquibase.asPath)
+    try {
+        println "\u001b[0;32m===> Rollback database to tag [$tag]\u001b[m"
+        ant {
+            path(id: "classpath") {
+                pathelement(path: configurations.liquibase.asPath)
+            }
+            taskdef(name: "rollbackDatabase", classname: "liquibase.integration.ant.DatabaseRollbackTask", classpathref: "classpath")
+            rollbackDatabase(changeLogFile: "$basedir/src/main/resources/db/changelog/db.changelog-master.xml",
+                    driver: DATABASE_DRIVER_CLASSNAME,
+                    url: DATABASE_URL,
+                    username: DATABASE_USERNAME,
+                    password: DATABASE_PASSWORD,
+                    classpathref: "classpath",
+                    rollbackTag: tag)
         }
-        taskdef(name: "rollbackDatabase", classname: "liquibase.integration.ant.DatabaseRollbackTask", classpathref: "classpath")
-        rollbackDatabase(changeLogFile: "$basedir/src/main/resources/db/changelog/db.changelog-master.xml",
-                driver: DATABASE_DRIVER_CLASSNAME,
-                url: DATABASE_URL,
-                username: DATABASE_USERNAME,
-                password: DATABASE_PASSWORD,
-                classpathref: "classpath",
-                rollbackTag: tag)
+    } catch (MissingPropertyException mpe) {
+        println """
+\u001B[0;31m===> ERROR \u001B[m\n
+\u001B[0;33mUsage:\u001B[m\n
+    \u001B[0;32m./gradlew rollbackDatabase -Ptag=NAME\u001b[m
+        """
     }
 }
 
+/**
+ * This task generates the database documentation (DBDoc)
+ *
+ * Usage:
+ *
+ *     dbDoc
+ */
 task dbDoc << {
     println "\u001b[0;32m===> Generating dbdoc database documentation\u001b[m"
     ant {
@@ -113,5 +223,4 @@ task dbDoc << {
 dependencies {
     liquibase "org.liquibase:liquibase-core:2.0.5"
     liquibase "postgresql:postgresql:9.1-901.jdbc4"
-    liquibase "org.hibernate:hibernate-core:$HIBERNATE_VERSION"
 }
