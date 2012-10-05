@@ -43,6 +43,8 @@ puts "\e[0;32m===> Replacing com.edify for project base package [#{options[:base
 `sed -i .bak -e 's/com\\.edify/#{options[:basepkg]}/g' build.gradle`
 `find src/main -type f \\( ! -iname "*.png" \\) -exec sed -i .bak -e 's/com\\.edify/#{options[:basepkg]}/g' {} \\;`
 
+`sed -i .bak -e 's/version = .+?/version = 1.0.0'/g build.gradle`
+
 #Cleanup .bak files
 `find . -iname "*.bak" -exec rm {} \\;`
 
