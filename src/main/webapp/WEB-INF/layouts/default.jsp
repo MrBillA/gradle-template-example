@@ -12,9 +12,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <e:resource url="css/bootstrap.css"/>
-    <e:resource url="css/bootstrap-responsive.css"/>
-    <e:resource url="css/application.css"/>
+    <e:bundle url="css/layout.css">
+        <e:resource url="css/bootstrap.css"/>
+        <e:resource url="css/bootstrap-responsive.css"/>
+        <e:resource url="css/application.css"/>
+    </e:bundle>
     <title><spring:message code="project.name"/> - <decorator:title default="Welcome!"/></title>
     <decorator:head/>
 </head>
@@ -57,12 +59,14 @@
         resGetPath:'${pageContext.request.contextPath}/translations/__lng__/__ns__-${cacheBuster}.json'
     };
 </script>
-<e:resource url="js/jquery-1.8.2.js"/>
-<e:resource url="js/modernizr-2.6.2.js"/>
-<e:resource url="js/bootstrap/bootstrap.js"/>
-<e:resource url="js/ujs.js"/>
-<e:resource url="js/i18next-1.5.7.js"/>
-<e:resource url="js/application.js"/>
+<e:bundle url="js/layout.js">
+    <e:resource url="js/jquery-1.8.2.js"/>
+    <e:resource url="js/modernizr-2.6.2.js"/>
+    <e:resource url="js/bootstrap/bootstrap.js"/>
+    <e:resource url="js/ujs.js"/>
+    <e:resource url="js/i18next-1.5.7.js"/>
+    <e:resource url="js/application.js"/>
+</e:bundle>
 <!--[if lt IE 7 ]>
 <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
 <script>window.attachEvent('onload', function () {
