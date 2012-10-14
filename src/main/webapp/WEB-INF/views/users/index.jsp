@@ -6,10 +6,10 @@
 <html>
 <head>
     <title><spring:message code="page.users.index.title"/></title>
-    <e:resource url="css/datatables/datatables" type="css" minify="true"/>
+    <e:resource url="css/datatables/datatables.css" fetchMinify="true"/>
     <content tag="defer">
-        <e:resource url="js/datatables/jquery.dataTables.min" type="js" minify="false"/>
-        <e:resource url="js/datatables/jquery.dataTables.bootstrap.min" type="js" minify="false"/>
+        <e:resource url="js/datatables/jquery.dataTables.js"/>
+        <e:resource url="js/datatables/jquery.dataTables.bootstrap.js"/>
     </content>
 </head>
 <body>
