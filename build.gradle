@@ -97,30 +97,88 @@ task compileLess << {
     )
 }
 
-task compressAll(dependsOn: [":compileLess"]) << {
-    println "\u001b[0;32m===> Compressing CSS\u001b[m"
-    ant {
-        taskdef(name: "yuicompressor",
-                classname: "net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask",
-                classpath: configurations.yui.asPath)
-        yuicompressor(jsSuffix: ".min.js", cssSuffix: ".min.css", fromDir: "src/main/webapp/css", toDir: "src/main/webapp/css", warn: false) {
-            include(name: "*.css")
-            exclude(name: "*.min.css")
-        }
-        yuicompressor(jsSuffix: ".min.js", cssSuffix: ".min.css", fromDir: "src/main/webapp/css/datatables", toDir: "src/main/webapp/css/datatables", warn: false) {
-            include(name: "*.css")
-            exclude(name: "*.min.css")
+def baseCssPath = "src/main/webapp/css"
+def css = [
+        layout: [
+                baseDir: baseCssPath,
+                files: ["$baseCssPath/bootstrap.css", "$baseCssPath/bootstrap-responsive.css", "$baseCssPath/application.css"]
+        ],
+        datatables: [
+                baseDir: "$baseCssPath/datatables",
+                files: ["$baseCssPath/datatables/datatables.css"]
+        ]
+]
+def baseJsPath = "src/main/webapp/js"
+def js = [
+        layout: [
+                baseDir: baseJsPath,
+                files: [
+                        "$baseJsPath/jquery-1.8.2.js",
+                        "$baseJsPath/modernizr-2.6.2.js",
+                        "$baseJsPath/bootstrap/bootstrap.js",
+                        "$baseJsPath/ujs.js",
+                        "$baseJsPath/i18next-1.5.7.js",
+                        "$baseJsPath/application.js"
+                ]
+        ],
+        datatables: [
+                baseDir: "$baseJsPath/datatables",
+                files: [
+                        "$baseJsPath/datatables/jquery.dataTables.js",
+                        "$baseJsPath/datatables/jquery.dataTables.bootstrap.js"
+                ]
+        ]
+]
+
+task combineCSS(dependsOn: [":compileLess"]) << {
+    println "\u001b[0;32m===> Combining CSS bundles\u001b[m"
+    css.each {bundle, attr ->
+        if (attr.files.size() > 1) {
+            ant.concat(destfile: ("${attr.baseDir}/${bundle}.css" as File).canonicalPath, fixlastline: 'yes') {
+                files(attr.files).each {
+                    fileset(file: it)
+                }
+            }
         }
     }
-    println "\u001b[0;32m===> Compressing Javascript\u001b[m"
+}
+
+task combineJS() << {
+    println "\u001b[0;32m===> Combining JS bundles\u001b[m"
+    js.each {bundle, attr ->
+        if (attr.files.size() > 1) {
+            ant.concat(destfile: ("${attr.baseDir}/${bundle}.js" as File).canonicalPath, fixlastline: 'yes') {
+                files(attr.files).each {
+                    fileset(file: it)
+                }
+            }
+        }
+    }
+}
+
+task compressAll(dependsOn: [":combineCSS", ":combineJS"]) << {
     ant {
         taskdef(name: "yuicompressor",
                 classname: "net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask",
                 classpath: configurations.yui.asPath)
-        ["src/main/webapp/js"].each {
-            yuicompressor(jsSuffix: ".min.js", cssSuffix: ".min.css", fromDir: it, toDir: it, warn: false) {
-                include(name: "*.js")
+        println "\u001b[0;32m===> Compressing CSS\u001b[m"
+        css.each {bundle, attr ->
+            yuicompressor(jsSuffix: ".min.js", cssSuffix: ".min.css", fromDir: attr.baseDir, toDir: attr.baseDir, warn: false) {
+                include(name: "${bundle}.css")
+                exclude(name: "*.min.css")
+            }
+            if (attr.files.size() > 1) {
+                ant.delete(file: "${attr.baseDir}/${bundle}.css")
+            }
+        }
+        println "\u001b[0;32m===> Compressing Javascript\u001b[m"
+        js.each {bundle, attr ->
+            yuicompressor(jsSuffix: ".min.js", cssSuffix: ".min.css", fromDir: attr.baseDir, toDir: attr.baseDir, warn: false) {
+                include(name: "${bundle}.js")
                 exclude(name: "*.min.js")
+            }
+            if (attr.files.size() > 1) {
+                ant.delete(file: "${attr.baseDir}/${bundle}.js")
             }
         }
     }

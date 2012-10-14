@@ -19,7 +19,7 @@
                 <ul class="nav pull-right">
                     <li class="divider-vertical"></li>
                     <li>
-                        <a href="${pageContext.request.contextPath}/resources/j_spring_security_logout">
+                        <a href="${pageContext.request.contextPath}/j_spring_security_logout">
                             <spring:message code="navbar.logout"/>
                         </a>
                     </li>
