@@ -1,3 +1,8 @@
+/**
+ * This is the main Gradle build file
+ *
+ * @author <a href="https://github.com/jarias">jarias</a>
+ */
 buildscript {
     repositories {
         add(new org.apache.ivy.plugins.resolver.URLResolver()) {
@@ -9,11 +14,9 @@ buildscript {
 
     dependencies {
         classpath "bmuschko:gradle-tomcat-plugin:0.8.2"
-        classpath "org.lesscss:lesscss:1.3.0"
     }
 }
 
-import org.lesscss.LessCompiler
 import groovy.xml.MarkupBuilder
 
 apply plugin: "java"
@@ -24,6 +27,7 @@ apply plugin: "jetty"
 apply plugin: "idea"
 //apply plugin: "eclipse"
 apply from: "liquibase.gradle"
+apply from: "assets.gradle"
 
 repositories {
     add(new org.apache.ivy.plugins.resolver.URLResolver()) {
@@ -45,14 +49,14 @@ repositories {
 version = "1.0.0"
 group = "com.edify"
 
-/**********************************************
- * Uncomment for Groovy/Java cross compilation *
- ***********************************************
- sourceSets.main.java.srcDirs = []
- sourceSets.main.groovy.srcDir 'src/main/java'
- sourceSets.test.java.srcDirs = []
- sourceSets.test.groovy.srcDir 'src/test/java'
- ********************************************* */
+/*
+ -- Uncomment for Groovy/Java cross compilation --
+
+sourceSets.main.java.srcDirs = []
+sourceSets.main.groovy.srcDir 'src/main/java'
+sourceSets.test.java.srcDirs = []
+sourceSets.test.groovy.srcDir 'src/test/java'
+*/
 
 configurations {
     all*.exclude group: "commons-logging"
@@ -60,10 +64,20 @@ configurations {
     yui
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.1'
+war {
+    dependsOn += ["compressAll", "generateRebel"]
 }
 
+/**
+ * Gradle wrapper task
+ */
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.2'
+}
+
+/**
+ * This task generates the Jrebel XML config file
+ */
 task generateRebel << {
     def rebelFile = sourceSets.main.output.classesDir.absolutePath + '/rebel.xml'
 
@@ -81,109 +95,9 @@ task generateRebel << {
     }
 }
 
-war {
-    dependsOn += ["compressAll", "generateRebel"]
-}
-
-task compileLess << {
-    //Compile all less files
-    println "\u001b[0;32m===> Compiling Less files\u001b[m"
-
-    LessCompiler lessCompiler = new LessCompiler()
-    lessCompiler.compress = true
-    lessCompiler.compile(
-            new File("src/main/webapp/WEB-INF/less/application.less"),
-            new File("src/main/webapp/css/application.css")
-    )
-}
-
-def baseCssPath = "src/main/webapp/css"
-def css = [
-        layout: [
-                baseDir: baseCssPath,
-                files: ["$baseCssPath/bootstrap.css", "$baseCssPath/bootstrap-responsive.css", "$baseCssPath/application.css"]
-        ],
-        datatables: [
-                baseDir: "$baseCssPath/datatables",
-                files: ["$baseCssPath/datatables/datatables.css"]
-        ]
-]
-def baseJsPath = "src/main/webapp/js"
-def js = [
-        layout: [
-                baseDir: baseJsPath,
-                files: [
-                        "$baseJsPath/jquery-1.8.2.js",
-                        "$baseJsPath/modernizr-2.6.2.js",
-                        "$baseJsPath/bootstrap/bootstrap.js",
-                        "$baseJsPath/ujs.js",
-                        "$baseJsPath/i18next-1.5.7.js",
-                        "$baseJsPath/application.js"
-                ]
-        ],
-        datatables: [
-                baseDir: "$baseJsPath/datatables",
-                files: [
-                        "$baseJsPath/datatables/jquery.dataTables.js",
-                        "$baseJsPath/datatables/jquery.dataTables.bootstrap.js"
-                ]
-        ]
-]
-
-task combineCSS(dependsOn: [":compileLess"]) << {
-    println "\u001b[0;32m===> Combining CSS bundles\u001b[m"
-    css.each {bundle, attr ->
-        if (attr.files.size() > 1) {
-            ant.concat(destfile: ("${attr.baseDir}/${bundle}.css" as File).canonicalPath, fixlastline: 'yes') {
-                files(attr.files).each {
-                    fileset(file: it)
-                }
-            }
-        }
-    }
-}
-
-task combineJS() << {
-    println "\u001b[0;32m===> Combining JS bundles\u001b[m"
-    js.each {bundle, attr ->
-        if (attr.files.size() > 1) {
-            ant.concat(destfile: ("${attr.baseDir}/${bundle}.js" as File).canonicalPath, fixlastline: 'yes') {
-                files(attr.files).each {
-                    fileset(file: it)
-                }
-            }
-        }
-    }
-}
-
-task compressAll(dependsOn: [":combineCSS", ":combineJS"]) << {
-    ant {
-        taskdef(name: "yuicompressor",
-                classname: "net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask",
-                classpath: configurations.yui.asPath)
-        println "\u001b[0;32m===> Compressing CSS\u001b[m"
-        css.each {bundle, attr ->
-            yuicompressor(jsSuffix: ".min.js", cssSuffix: ".min.css", fromDir: attr.baseDir, toDir: attr.baseDir, warn: false) {
-                include(name: "${bundle}.css")
-                exclude(name: "*.min.css")
-            }
-            if (attr.files.size() > 1) {
-                ant.delete(file: "${attr.baseDir}/${bundle}.css")
-            }
-        }
-        println "\u001b[0;32m===> Compressing Javascript\u001b[m"
-        js.each {bundle, attr ->
-            yuicompressor(jsSuffix: ".min.js", cssSuffix: ".min.css", fromDir: attr.baseDir, toDir: attr.baseDir, warn: false) {
-                include(name: "${bundle}.js")
-                exclude(name: "*.min.js")
-            }
-            if (attr.files.size() > 1) {
-                ant.delete(file: "${attr.baseDir}/${bundle}.js")
-            }
-        }
-    }
-}
-
+/**
+ * This task runs the Seed class for data population
+ */
 task(dbSeed, type: JavaExec) {
     main = "com.edify.db.Seed"
     classpath = sourceSets.main.runtimeClasspath
