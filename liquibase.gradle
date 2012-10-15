@@ -1,3 +1,8 @@
+/**
+ * This build file handles database migrations wrapping Liquibase ant task and with some other custom tasks
+ *
+ * @author <a href="https://github.com/jarias">jarias</a>
+ */
 import groovy.xml.StreamingMarkupBuilder
 
 import javax.xml.transform.OutputKeys
