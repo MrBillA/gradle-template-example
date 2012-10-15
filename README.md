@@ -24,14 +24,13 @@ The template includes:
 # Versions
 
 * Spring                   3.1.2.RELEASE
-* Spring Security          3.1.1.RELEASE
-* Hibernate Core           4.1.5.Final
-* Hibernate Entity Manager 4.1.5.Final
+* Spring Security          3.1.2.RELEASE
+* Hibernate Core           4.1.7.Final
 * SLF4J                    1.6.6
 * Logback                  1.0.6
 * Sitemesh                 2.4.2   
 * PostgreSQL               9.1-901.jdbc4
-* Liquibase                2.0.4
+* Liquibase                2.0.5
 
 For a full list look at the build.gradle file
 

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author: <a href="https://github.com/jarias">jarias</a>
+ * @author <a href="https://github.com/jarias">jarias</a>
  */
 @Controller
 @RequestMapping("/users")
