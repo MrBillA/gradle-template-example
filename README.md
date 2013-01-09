@@ -23,7 +23,7 @@ The template includes:
 
 # Versions
 
-* Spring                   3.1.2.RELEASE
+* Spring                   3.2.0.RELEASE
 * Spring Security          3.1.2.RELEASE
 * Hibernate Core           4.1.7.Final
 * SLF4J                    1.6.6
