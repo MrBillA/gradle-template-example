@@ -9,10 +9,10 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.orm.jpa.JpaDialect;
+import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
@@ -96,20 +96,7 @@ public class ApplicationConfig {
 
     @Bean
     public DataSource dataSource() {
-        // If we are in Heroku the database URL should match postgres://(.+?):(.+?)@(.+?):(.+?)/(.+)
-        // This URL includes username = $1, password = $2, hostname = $3, port = $4, database = $5
-        Pattern herokuDatabaseUrlPattern = Pattern.compile("postgres://(.+?):(.+?)@(.+?):(.+?)/(.+)");
-        Matcher herokuDatabaseUrlMatcher = herokuDatabaseUrlPattern.matcher(databaseUrl);
-        if (herokuDatabaseUrlMatcher.matches()) {
-            //We are in Heroku or our at least the database URL uses the same PostgreSQL format
-            databaseUsername = herokuDatabaseUrlMatcher.group(1);
-            databasePassword = herokuDatabaseUrlMatcher.group(2);
-            //Now we need a valid JDBC PostgreSQL
-            databaseUrl = String.format("jdbc:postgresql://%s:%s/%s",
-                    herokuDatabaseUrlMatcher.group(3),
-                    herokuDatabaseUrlMatcher.group(4),
-                    herokuDatabaseUrlMatcher.group(5));
-        } //Else nothing use the properties as they come.
+        parseDatabaseUrl();
 
         BoneCPDataSource ds = new BoneCPDataSource();
         ds.setDriverClass(databaseDriverClassname);
@@ -128,14 +115,40 @@ public class ApplicationConfig {
         return ds;
     }
 
+    /**
+     * This method parses Heroku style database URL if present
+     */
+    private void parseDatabaseUrl() {
+        // If we are in Heroku the database URL should match postgres://(.+?):(.+?)@(.+?):(.+?)/(.+)
+        // This URL includes username = $1, password = $2, hostname = $3, port = $4, database = $5
+        Pattern herokuDatabaseUrlPattern = Pattern.compile("postgres://(.+?):(.+?)@(.+?):(.+?)/(.+)");
+        Matcher herokuDatabaseUrlMatcher = herokuDatabaseUrlPattern.matcher(databaseUrl);
+        if (herokuDatabaseUrlMatcher.matches()) {
+            //We are in Heroku or our at least the database URL uses the same PostgreSQL format
+            databaseUsername = herokuDatabaseUrlMatcher.group(1);
+            databasePassword = herokuDatabaseUrlMatcher.group(2);
+            //Now we need a valid JDBC PostgreSQL
+            databaseUrl = String.format("jdbc:postgresql://%s:%s/%s",
+                    herokuDatabaseUrlMatcher.group(3),
+                    herokuDatabaseUrlMatcher.group(4),
+                    herokuDatabaseUrlMatcher.group(5));
+        } //Else nothing use the properties as they come.
+    }
+
     @Bean
     public PersistenceProvider persistenceProvider() {
         return new HibernatePersistence();
     }
 
     @Bean
-    public JpaDialect jpaDialect() {
-        return new HibernateJpaDialect();
+    public HibernateExceptionTranslator exceptionTranslator() {
+        return new HibernateExceptionTranslator();
+    }
+
+
+    @Bean
+    public HibernateJpaVendorAdapter jpaVendorAdapter() {
+        return new HibernateJpaVendorAdapter();
     }
 
     @Bean(name = "entityManagerFactory")
@@ -145,7 +158,7 @@ public class ApplicationConfig {
         localContainerEntityManagerFactoryBean.setDataSource(dataSource());
         localContainerEntityManagerFactoryBean.setPersistenceProvider(persistenceProvider());
         localContainerEntityManagerFactoryBean.setPackagesToScan("com.edify.model");
-        localContainerEntityManagerFactoryBean.setJpaDialect(jpaDialect());
+        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter());
         Properties jpaProperties = new Properties();
         jpaProperties.setProperty("hibernate.dialect", hibernateDialect);
         jpaProperties.setProperty("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");

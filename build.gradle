@@ -46,7 +46,7 @@ repositories {
     mavenCentral()
 }
 
-version = "1.1.0"
+version = "1.1.1"
 group = "com.edify"
 
 /*
@@ -72,7 +72,7 @@ war {
  * Gradle wrapper task
  */
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.2'
+    gradleVersion = '1.3'
 }
 
 /**
@@ -119,13 +119,13 @@ processResources {
 }
 
 def versions = [
-        spring: "3.1.2.RELEASE",
+        spring: "3.2.0.RELEASE",
         springSecurity: "3.1.2.RELEASE",
         springDataJpa: "1.2.0.RELEASE",
         slf4j: "1.6.6",
         hibernate: "4.1.7.Final",
         groovy: "2.0.5",
-        tomcat: "6.0.35",
+        tomcat: "7.0.34",
         logback: "1.0.6"
 ]
 
@@ -137,13 +137,12 @@ def hibernate = [
 
 dependencies {
     //groovy("org.codehaus.groovy:groovy-all:${versions.groovy}")
-    providedCompile("javax.servlet:servlet-api:2.5", "javax.el:el-api:2.2", "javax.servlet.jsp:jsp-api:2.1")
+    providedCompile("javax.servlet:javax.servlet-api:3.0.1")
     testCompile("junit:junit:4.10", "org.easymock:easymock:3.1")
     // ** Hibernate **
     hibernate.collect {
         compile(it) {
             exclude(group: "cglib", module: "cglib")
-            exclude(group: "org.jboss.spec.javax.transaction", module: "jboss-transaction-api_1.1_spec")
         }
     }
     compile("org.springframework.security.oauth:spring-security-oauth:1.0.0.RC2") {
@@ -154,7 +153,6 @@ dependencies {
     compile "org.springframework:spring-core:${versions.spring}"
     compile "org.springframework:spring-context:${versions.spring}"
     compile "org.springframework:spring-aop:${versions.spring}"
-    compile "org.springframework:spring-aspects:${versions.spring}"
     compile "org.springframework:spring-tx:${versions.spring}"
     compile "org.springframework:spring-jdbc:${versions.spring}"
     compile "org.springframework:spring-orm:${versions.spring}"
@@ -162,15 +160,15 @@ dependencies {
     compile "org.springframework:spring-webmvc:${versions.spring}"
     compile "org.springframework:spring-context-support:${versions.spring}"
     compile "org.springframework:spring-test:${versions.spring}"
-    // ** AspectJ **
-    compile "org.aspectj:aspectjrt:1.7.0"
     // ** Spring Security **
     compile "org.springframework.security:spring-security-core:${versions.springSecurity}"
     compile "org.springframework.security:spring-security-config:${versions.springSecurity}"
     compile "org.springframework.security:spring-security-web:${versions.springSecurity}"
     compile "org.springframework.security:spring-security-taglibs:${versions.springSecurity}"
     // ** Spring Data JPA **
-    compile "org.springframework.data:spring-data-jpa:${versions.springDataJpa}"
+    compile("org.springframework.data:spring-data-jpa:${versions.springDataJpa}") {
+        exclude group: "org.aspectj"
+    }
     // ** Scribe OAuth **
     compile "org.scribe:scribe:1.3.1"
     // ** SiteMesh **
@@ -179,7 +177,6 @@ dependencies {
     compile "commons-fileupload:commons-fileupload:1.2.2"
     compile "commons-digester:commons-digester:2.1"
     compile "commons-lang:commons-lang:2.6"
-    compile "commons-pool:commons-pool:1.6"
     compile "commons-codec:commons-codec:1.6"
     // ** BoneCP **
     compile "com.jolbox:bonecp:0.7.1.RELEASE"
@@ -194,15 +191,11 @@ dependencies {
     compile "com.google.guava:guava:13.0.1"
     compile "joda-time:joda-time:2.1"
     compile "org.codehaus.jackson:jackson-mapper-asl:1.9.9"
-    compile "cglib:cglib-nodep:2.2.2"
     // ** Database **
     compile "postgresql:postgresql:9.1-901.jdbc4"
     // ** Javax **
     compile "javax.mail:mail:1.4.1"
-    compile "javax.activation:activation:1.1.1"
     compile "javax.servlet:jstl:1.2"
-    compile "javax.transaction:jta:1.1"
-    compile "javax.validation:validation-api:1.0.0.GA"
     // ** Web Filters **
     compile "net.sf.ehcache:ehcache-web:2.0.4"
     compile "org.tuckey:urlrewritefilter:4.0.4"
@@ -211,9 +204,11 @@ dependencies {
 
     runtime "janino:janino:2.5.10"
 
-    tomcat "org.apache.tomcat:catalina:${versions.tomcat}"
-    tomcat "org.apache.tomcat:coyote:${versions.tomcat}"
-    tomcat "org.apache.tomcat:jasper:${versions.tomcat}"
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${versions.tomcat}"
+    tomcat "org.apache.tomcat.embed:tomcat-embed-logging-juli:${versions.tomcat}"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${versions.tomcat}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
     yui "com.yahoo.platform.yui:yuicompressor:2.4.6"
     yui "noha:yui-compressor-ant-task:0.5.1"
 }
